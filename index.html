@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>حاسبة استهلاك وتكلفة أنظمة الأرضيات الإيبوكسية</title>
+<style>
+  :root{
+    --navy:#0f2b46;
+    --navy-light:#1c4a72;
+    --accent:#e07a1f;
+    --accent-light:#f6a94f;
+    --bg:#f4f6f8;
+    --card:#ffffff;
+    --border:#dfe4e9;
+    --text:#1c2733;
+    --text-mute:#5b6b78;
+    --good:#1c7c4b;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:"Segoe UI","Tahoma",Arial,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    line-height:1.55;
+  }
+  header{
+    background:linear-gradient(135deg,var(--navy) 0%,var(--navy-light) 100%);
+    color:#fff;
+    padding:28px 24px 22px;
+    text-align:center;
+  }
+  header h1{
+    margin:0 0 6px;
+    font-size:1.5rem;
+    font-weight:700;
+  }
+  header p{
+    margin:0;
+    color:#cfe0ee;
+    font-size:.92rem;
+  }
+  .wrap{
+    max-width:960px;
+    margin:0 auto;
+    padding:22px 16px 60px;
+  }
+  .card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:22px;
+    margin-bottom:18px;
+    box-shadow:0 1px 3px rgba(15,43,70,.06);
+  }
+  .card h2{
+    margin:0 0 16px;
+    font-size:1.08rem;
+    color:var(--navy);
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .badge{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:24px;height:24px;
+    background:var(--accent);
+    color:#fff;
+    border-radius:50%;
+    font-size:.8rem;
+    font-weight:700;
+    flex:none;
+  }
+  label{
+    display:block;
+    font-size:.86rem;
+    color:var(--text-mute);
+    margin-bottom:6px;
+    font-weight:600;
+  }
+  select, input[type=number]{
+    width:100%;
+    padding:11px 12px;
+    border:1.5px solid var(--border);
+    border-radius:9px;
+    font-size:.98rem;
+    background:#fff;
+    color:var(--text);
+    font-family:inherit;
+  }
+  select:focus, input:focus{
+    outline:none;
+    border-color:var(--navy-light);
+  }
+  .grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+  }
+  .grid3{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:16px;
+  }
+  @media (max-width:640px){
+    .grid, .grid3{grid-template-columns:1fr;}
+  }
+  .field{margin-bottom:4px;}
+  .hint{
+    font-size:.78rem;
+    color:var(--text-mute);
+    margin-top:6px;
+  }
+  .layer-slider-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  input[type=range]{
+    flex:1;
+    accent-color:var(--accent);
+  }
+  .layer-val{
+    min-width:52px;
+    text-align:center;
+    font-weight:700;
+    background:var(--navy);
+    color:#fff;
+    border-radius:8px;
+    padding:6px 8px;
+    font-size:.9rem;
+  }
+  .system-desc{
+    background:#f0f5fa;
+    border-radius:10px;
+    padding:12px 14px;
+    font-size:.85rem;
+    color:var(--text-mute);
+    margin-top:10px;
+  }
+  table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:.9rem;
+  }
+  th, td{
+    padding:10px 10px;
+    text-align:center;
+    border-bottom:1px solid var(--border);
+  }
+  th{
+    background:#eef3f7;
+    color:var(--navy);
+    font-size:.8rem;
+    font-weight:700;
+  }
+  td:first-child, th:first-child{
+    text-align:right;
+  }
+  tbody tr:hover{background:#fafbfc;}
+  .totals{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+    margin-top:18px;
+  }
+  @media (max-width:640px){ .totals{grid-template-columns:1fr;} }
+  .total-tile{
+    background:linear-gradient(135deg,var(--navy) 0%,var(--navy-light) 100%);
+    color:#fff;
+    border-radius:12px;
+    padding:16px;
+    text-align:center;
+  }
+  .total-tile.accent{
+    background:linear-gradient(135deg,#c9631a 0%,var(--accent-light) 100%);
+  }
+  .total-tile .num{
+    font-size:1.5rem;
+    font-weight:800;
+    display:block;
+    margin-bottom:2px;
+  }
+  .total-tile .lbl{
+    font-size:.78rem;
+    opacity:.9;
+  }
+  .notes{
+    background:#fff7ec;
+    border:1px solid #f1d9ad;
+    border-radius:10px;
+    padding:14px 16px;
+    font-size:.83rem;
+    color:#6b4d16;
+    margin-top:16px;
+  }
+  .notes ul{margin:6px 0 0; padding-inline-start:18px;}
+  .notes li{margin-bottom:4px;}
+  .toggle-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-top:10px;
+    font-size:.85rem;
+    color:var(--text-mute);
+  }
+  .toggle-row input{width:auto;}
+  footer{
+    text-align:center;
+    color:var(--text-mute);
+    font-size:.78rem;
+    padding:10px 16px 30px;
+  }
+  .empty-note{
+    text-align:center;
+    color:var(--text-mute);
+    font-size:.85rem;
+    padding:10px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>حاسبة استهلاك وتكلفة أنظمة الأرضيات الإيبوكسية</h1>
+  <p>اختر النظام، أدخل المساحة والسماكة (عدد الطبقات) لحساب الكمية المطلوبة وعدد البراميل والتكلفة التقديرية</p>
+</header>
+
+<div class="wrap">
+
+  <div class="card">
+    <h2><span class="badge">1</span> اختيار النظام والمعطيات</h2>
+    <div class="grid">
+      <div class="field">
+        <label for="systemSelect">نوع النظام / المنتج</label>
+        <select id="systemSelect"></select>
+      </div>
+      <div class="field">
+        <label for="areaInput">مساحة الأرضية (م²)</label>
+        <input type="number" id="areaInput" min="1" step="1" value="1000">
+      </div>
+    </div>
+
+    <div id="adjustableWrap" class="field" style="margin-top:14px;"></div>
+
+    <div id="systemDesc" class="system-desc"></div>
+
+    <div class="grid" style="margin-top:16px;">
+      <div class="field">
+        <label for="colorSelect">اللون</label>
+        <select id="colorSelect">
+          <option value="standard">اللون القياسي (رمادي RAL 7040) — بدون تكلفة إضافية</option>
+          <option value="special">لون خاص — تُضاف تكلفة تلوين إضافية (تُحدد عند الطلب، غير محسوبة هنا)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="wasteInput">هامش هدر / فاقد (%)</label>
+        <input type="number" id="wasteInput" min="0" max="30" step="1" value="5">
+      </div>
+    </div>
+
+    <div class="toggle-row">
+      <input type="checkbox" id="sarToggle">
+      <label for="sarToggle" style="margin:0;">عرض التكلفة أيضاً بالريال السعودي بسعر صرف تقديري:</label>
+      <input type="number" id="rateInput" value="3.75" step="0.01" style="width:80px;" disabled>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><span class="badge">2</span> تفاصيل المواد المطلوبة</h2>
+    <div style="overflow-x:auto;">
+      <table id="resultsTable">
+        <thead>
+          <tr>
+            <th>المادة</th>
+            <th>الاستهلاك / م²</th>
+            <th>الكمية الفعلية المطلوبة</th>
+            <th>حجم العبوة</th>
+            <th>عدد البراميل (شراء)</th>
+            <th>التكلفة التقديرية</th>
+          </tr>
+        </thead>
+        <tbody id="resultsBody"></tbody>
+      </table>
+    </div>
+
+    <div class="totals">
+      <div class="total-tile">
+        <span class="num" id="totalDrums">0</span>
+        <span class="lbl">إجمالي عدد البراميل/العبوات</span>
+      </div>
+      <div class="total-tile">
+        <span class="num" id="totalWeight">0</span>
+        <span class="lbl">إجمالي وزن/حجم المواد</span>
+      </div>
+      <div class="total-tile accent">
+        <span class="num" id="totalCost">$0</span>
+        <span class="lbl">التكلفة التقديرية الإجمالية</span>
+      </div>
+    </div>
+
+    <div id="sarBlock" class="hint" style="text-align:center;margin-top:8px;display:none;"></div>
+
+    <div class="notes">
+      <strong>ملاحظات هامة:</strong>
+      <ul>
+        <li>الأسعار مخصصة للون القياسي الرمادي (RAL 7040) وتُمثل قيمة المنتجات وتسليمها من المصنع بالرياض، ولا تشمل أجور التوصيل أو الجمارك أو ضريبة القيمة المضافة.</li>
+        <li>لا تشمل التكلفة معجون الإيبوكسي المستخدم في معالجة السطح، حيث يُحدد الاحتياج إليه حسب حالة الأرضية والتقييم الفني.</li>
+        <li>تمت إضافة هامش الهدر/الفاقد الذي حددته لتغطية فروقات التطبيق الفعلية على الموقع.</li>
+        <li>عدد البراميل مقرَّب لأعلى لأقرب عبوة كاملة، لأن الشراء يكون بعبوات كاملة فقط.</li>
+        <li id="specialColorNote" style="display:none;">تم اختيار لون خاص: ستُضاف تكلفة تلوين إضافية يتم تحديدها عند الطلب — غير مدرجة في الحساب أعلاه.</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<footer>حاسبة تقديرية للأغراض الاسترشادية — بناءً على معدلات استهلاك وأسعار جرفيتي (أغسطس). يُنصح بمراجعة العرض الفني النهائي قبل الشراء.</footer>
+
+<script>
+// ---------- DATA (from Graffiti product & consumption price list, August) ----------
+// baseRatePerM2: consumption rate (kg or L per m²) at the system's DEFAULT adjustable value
+// scales: true -> quantity scales proportionally with the adjustable field (layers or thickness)
+//         false -> quantity stays fixed regardless of the adjustable field (e.g. primer, sealer)
+const SYSTEMS = [
+  {
+    id: 'sb110',
+    name: 'إيبوكسي أرضيات SB 110 (داخلي)',
+    desc: 'نظام إيبوكسي أرضيات قياسي للاستخدام الداخلي: طبقة أساس (برايمر) + طبقة إيبوكسي نهائية قابلة لتعدد الطبقات.',
+    adjustable: { type:'layers', label:'عدد طبقات الإيبوكسي النهائي (SB 110)', min:1, max:4, default:2, step:1, unit:'طبقة' },
+    components: [
+      { name:'أساس إيبوكسي SB 102 (طبقة الأساس/البرايمر)', unit:'KG', packSize:18, price:83.2, baseRatePerM2:0.25, scales:false },
+      { name:'إيبوكسي أرضيات SB 110 (الطبقة النهائية)', unit:'KG', packSize:21, price:100, baseRatePerM2:0.5, scales:true },
+      { name:'تينر إيبوكسي S500 (مخفف)', unit:'L', packSize:18, price:45.33, baseRatePerM2:0.075, scales:true }
+    ]
+  },
+  {
+    id: 'sf120',
+    name: 'إيبوكسي أرضيات خالي من المذيبات SF 120 (داخلي)',
+    desc: 'نظام إيبوكسي خالٍ من المذيبات للأرضيات الداخلية: طبقة أساس + طبقة نهائية قابلة لتعدد الطبقات.',
+    adjustable: { type:'layers', label:'عدد طبقات الإيبوكسي النهائي (SF 120)', min:1, max:4, default:2, step:1, unit:'طبقة' },
+    components: [
+      { name:'أساس إيبوكسي خالي من المذيبات SF 101 (طبقة الأساس)', unit:'KG', packSize:18, price:96, baseRatePerM2:0.25, scales:false },
+      { name:'إيبوكسي أرضيات SF 120 (الطبقة النهائية)', unit:'KG', packSize:21, price:121.3, baseRatePerM2:0.5, scales:true },
+      { name:'تينر إيبوكسي S500 (مخفف)', unit:'L', packSize:18, price:45.33, baseRatePerM2:0.075, scales:true }
+    ]
+  },
+  {
+    id: 'sl90',
+    name: 'إيبوكسي سيلف ليفل 90 SL (داخلي)',
+    desc: 'أرضية إيبوكسي ذاتية التسوية (سيلف ليفل) للاستخدام الداخلي: طبقة أساس + طبقة سيلف ليفل.',
+    adjustable: { type:'layers', label:'عدد طبقات السيلف ليفل SL 90', min:1, max:2, default:1, step:1, unit:'طبقة' },
+    components: [
+      { name:'أساس إيبوكسي خالي من المذيبات SF 101 (طبقة الأساس)', unit:'KG', packSize:18, price:96, baseRatePerM2:0.25, scales:false },
+      { name:'إيبوكسي سيلف ليفل 90 SL', unit:'KG', packSize:18, price:125.3, baseRatePerM2:1.5, scales:true }
+    ]
+  },
+  {
+    id: 'pu',
+    name: 'دهان البولي يوريثان PU (داخلي / خارجي)',
+    desc: 'نظام طلاء بولي يوريثان للأرضيات (داخلي أو خارجي): طبقة أساس + طبقة نهائية قابلة لتعدد الطبقات.',
+    adjustable: { type:'layers', label:'عدد طبقات دهان البولي يوريثان', min:1, max:4, default:2, step:1, unit:'طبقة' },
+    components: [
+      { name:'أساس البولي يوريثان (طبقة الأساس)', unit:'KG', packSize:18, price:288, baseRatePerM2:0.25, scales:false },
+      { name:'دهان البولي يوريثان (الطبقة النهائية)', unit:'KG', packSize:18, price:288, baseRatePerM2:0.5, scales:true },
+      { name:'تينر إيبوكسي S500 (مخفف)', unit:'L', packSize:18, price:45.33, baseRatePerM2:0.075, scales:true }
+    ]
+  },
+  {
+    id: 'wt',
+    name: 'إيبوكسي دهان خزانات W.T (داخلي)',
+    desc: 'نظام إيبوكسي لتبطين ودهان الخزانات الداخلية: طبقة أساس + طبقة نهائية قابلة لتعدد الطبقات.',
+    adjustable: { type:'layers', label:'عدد طبقات دهان الخزانات W.T', min:1, max:4, default:2, step:1, unit:'طبقة' },
+    components: [
+      { name:'أساس إيبوكسي MT 104 (طبقة الأساس)', unit:'KG', packSize:15, price:96, baseRatePerM2:0.25, scales:false },
+      { name:'إيبوكسي دهان خزانات W.T (الطبقة النهائية)', unit:'KG', packSize:25, price:133.3, baseRatePerM2:0.5, scales:true }
+    ]
+  },
+  {
+    id: 'epocem',
+    name: 'مايكروتوبينج Epo-Cem (داخلي / خارجي)',
+    desc: 'نظام مايكروتوبينج إسمنتي-إيبوكسي: طبقة أساس + طبقة مايكروتوبينج قابلة لتعدد الطبقات + طبقة سيلر حماية نهائية.',
+    adjustable: { type:'layers', label:'عدد طبقات المايكروتوبينج Epo-Cem', min:1, max:4, default:2, step:1, unit:'طبقة' },
+    components: [
+      { name:'أساس إيبوكسي MT 104 (طبقة الأساس)', unit:'KG', packSize:15, price:96, baseRatePerM2:0.25, scales:false },
+      { name:'مايكروتوبينج Epo-Cem', unit:'KG', packSize:36, price:186, baseRatePerM2:2, scales:true },
+      { name:'ألترا سيلر 10 (طبقة حماية نهائية)', unit:'L', packSize:18, price:88, baseRatePerM2:0.5, scales:false }
+    ]
+  },
+  {
+    id: 'stonecarpet',
+    name: 'ستون كاربت (داخلي / خارجي)',
+    desc: 'نظام ستون كاربت (ريزين + حصى مزخرف): طبقة أساس + ريزين الربط + طبقة حماية شفافة. الكمية تُحسب حسب سماكة طبقة الحصى.',
+    adjustable: { type:'thickness', label:'سماكة طبقة الحصى (مم)', min:5, max:20, default:10, step:1, unit:'مم' },
+    components: [
+      { name:'أساس إيبوكسي خالي من المذيبات SF 101 (طبقة الأساس)', unit:'KG', packSize:18, price:96, baseRatePerM2:0.25, scales:false },
+      { name:'ريزن ستون كاربت (رابط الحصى)', unit:'KG', packSize:18, price:360, baseRatePerM2:1.26, scales:true },
+      { name:'بولي يوريثان PT50 شفاف (طبقة الحماية النهائية)', unit:'KG', packSize:18, price:320, baseRatePerM2:0.4, scales:false }
+    ],
+    extraNote: 'يلزم توفير حصى زخرفي (4-6 مم) بمعدل تقريبي 18 كجم لكل م² لطبقة بسمك 1 سم — غير مشمول في التكلفة أعلاه.'
+  },
+  {
+    id: 'terrazzo',
+    name: 'إيبوكسي تيرازو (داخلي)',
+    desc: 'نظام أرضيات تيرازو إيبوكسي ملون: طبقة أساس + طبقة تيرازو. الكمية تُحسب حسب سماكة طبقة التيرازو.',
+    adjustable: { type:'thickness', label:'سماكة طبقة التيرازو (مم)', min:5, max:20, default:10, step:1, unit:'مم' },
+    components: [
+      { name:'أساس إيبوكسي خالي من المذيبات SF 101 (طبقة الأساس)', unit:'KG', packSize:18, price:96, baseRatePerM2:0.25, scales:false },
+      { name:'إيبوكسي تيرازو TZ 150 ملون', unit:'KG', packSize:18, price:273, baseRatePerM2:3.75, scales:true }
+    ],
+    extraNote: 'يلزم توفير بحص رخام وبودرة رخام بمعدل تقريبي 11 كجم لكل منهما لكل م² لطبقة بسمك 1 سم — غير مشمولين في التكلفة أعلاه.'
+  }
+];
+
+// ---------- DOM ----------
+const systemSelect = document.getElementById('systemSelect');
+const areaInput = document.getElementById('areaInput');
+const adjustableWrap = document.getElementById('adjustableWrap');
+const systemDesc = document.getElementById('systemDesc');
+const colorSelect = document.getElementById('colorSelect');
+const wasteInput = document.getElementById('wasteInput');
+const sarToggle = document.getElementById('sarToggle');
+const rateInput = document.getElementById('rateInput');
+const resultsBody = document.getElementById('resultsBody');
+const totalDrums = document.getElementById('totalDrums');
+const totalWeight = document.getElementById('totalWeight');
+const totalCost = document.getElementById('totalCost');
+const sarBlock = document.getElementById('sarBlock');
+const specialColorNote = document.getElementById('specialColorNote');
+
+SYSTEMS.forEach(sys=>{
+  const opt = document.createElement('option');
+  opt.value = sys.id;
+  opt.textContent = sys.name;
+  systemSelect.appendChild(opt);
+});
+
+function fmt(n, decimals){
+  if (decimals===undefined) decimals = 2;
+  return Number(n).toLocaleString('en-US', {minimumFractionDigits:decimals, maximumFractionDigits:decimals});
+}
+
+function currentSystem(){
+  return SYSTEMS.find(s=>s.id===systemSelect.value);
+}
+
+function renderAdjustable(){
+  const sys = currentSystem();
+  systemDesc.textContent = sys.desc + (sys.extraNote ? ' ' : '');
+  const adj = sys.adjustable;
+  adjustableWrap.innerHTML = `
+    <label for="adjustableRange">${adj.label}</label>
+    <div class="layer-slider-row">
+      <input type="range" id="adjustableRange" min="${adj.min}" max="${adj.max}" step="${adj.step}" value="${adj.default}">
+      <span class="layer-val" id="adjustableVal">${adj.default} ${adj.unit}</span>
+    </div>
+    <div class="hint">القيمة القياسية الموصى بها: ${adj.default} ${adj.unit}</div>
+  `;
+  const range = document.getElementById('adjustableRange');
+  const val = document.getElementById('adjustableVal');
+  range.addEventListener('input', ()=>{
+    val.textContent = `${range.value} ${adj.unit}`;
+    calculate();
+  });
+}
+
+function calculate(){
+  const sys = currentSystem();
+  const area = Math.max(0, parseFloat(areaInput.value) || 0);
+  const wastePct = Math.max(0, parseFloat(wasteInput.value) || 0);
+  const wasteFactor = 1 + (wastePct/100);
+  const adj = sys.adjustable;
+  const range = document.getElementById('adjustableRange');
+  const currentVal = range ? parseFloat(range.value) : adj.default;
+  const ratio = currentVal / adj.default;
+
+  let rows = '';
+  let sumDrums = 0;
+  let sumWeightKG = 0, sumVolumeL = 0;
+  let sumCost = 0;
+
+  sys.components.forEach(c=>{
+    const ratePerM2 = c.scales ? c.baseRatePerM2 * ratio : c.baseRatePerM2;
+    const exactQty = ratePerM2 * area * wasteFactor;
+    const pricePerUnit = c.price / c.packSize;
+    const drumsNeeded = area>0 ? Math.max(0, Math.ceil(exactQty / c.packSize)) : 0;
+    const purchaseCost = drumsNeeded * c.price;
+
+    sumDrums += drumsNeeded;
+    if (c.unit === 'L') sumVolumeL += drumsNeeded*c.packSize; else sumWeightKG += drumsNeeded*c.packSize;
+    sumCost += purchaseCost;
+
+    rows += `<tr>
+      <td>${c.name}</td>
+      <td>${fmt(ratePerM2,3)} ${c.unit}/م²</td>
+      <td>${fmt(exactQty,1)} ${c.unit}</td>
+      <td>${c.packSize} ${c.unit} — $${fmt(c.price,2)}</td>
+      <td><strong>${drumsNeeded}</strong></td>
+      <td>$${fmt(purchaseCost,2)}</td>
+    </tr>`;
+  });
+
+  resultsBody.innerHTML = rows || `<tr><td colspan="6" class="empty-note">أدخل مساحة أكبر من صفر لعرض النتائج</td></tr>`;
+
+  totalDrums.textContent = sumDrums;
+  const weightParts = [];
+  if (sumWeightKG>0) weightParts.push(`${fmt(sumWeightKG,0)} كجم`);
+  if (sumVolumeL>0) weightParts.push(`${fmt(sumVolumeL,0)} لتر`);
+  totalWeight.textContent = weightParts.join(' + ') || '0';
+  totalCost.textContent = `$${fmt(sumCost,2)}`;
+
+  if (sarToggle.checked){
+    const rate = parseFloat(rateInput.value) || 0;
+    sarBlock.style.display = 'block';
+    sarBlock.textContent = `≈ ${fmt(sumCost*rate,2)} ريال سعودي (بسعر صرف تقديري ${fmt(rate,2)} — يمكن تعديله)`;
+  } else {
+    sarBlock.style.display = 'none';
+  }
+
+  specialColorNote.style.display = colorSelect.value==='special' ? 'block' : 'none';
+}
+
+systemSelect.addEventListener('change', ()=>{ renderAdjustable(); calculate(); });
+areaInput.addEventListener('input', calculate);
+colorSelect.addEventListener('change', calculate);
+wasteInput.addEventListener('input', calculate);
+sarToggle.addEventListener('change', ()=>{ rateInput.disabled = !sarToggle.checked; calculate(); });
+rateInput.addEventListener('input', calculate);
+
+// init
+renderAdjustable();
+calculate();
+</script>
+
+</body>
+</html>
