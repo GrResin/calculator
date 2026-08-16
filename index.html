@@ -279,10 +279,14 @@
       </div>
     </div>
 
+    <div class="field" style="margin-top:16px;max-width:260px;">
+      <label for="rateInput">سعر الصرف (1$ = كم ريال سعودي)</label>
+      <input type="number" id="rateInput" value="3.75" step="0.01" min="0.01">
+    </div>
+
     <div class="toggle-row">
-      <input type="checkbox" id="sarToggle">
-      <label for="sarToggle" style="margin:0;">عرض التكلفة أيضاً بالريال السعودي بسعر صرف تقديري:</label>
-      <input type="number" id="rateInput" value="3.75" step="0.01" style="width:80px;" disabled>
+      <input type="checkbox" id="usdToggle">
+      <label for="usdToggle" style="margin:0;">إظهار التكلفة بالدولار الأمريكي أيضاً (اختياري)</label>
     </div>
   </div>
 
@@ -314,12 +318,12 @@
         <span class="lbl">إجمالي وزن/حجم المواد</span>
       </div>
       <div class="total-tile accent">
-        <span class="num" id="totalCost">$0</span>
+        <span class="num" id="totalCost">0 ر.س</span>
         <span class="lbl">التكلفة التقديرية الإجمالية</span>
       </div>
     </div>
 
-    <div id="sarBlock" class="hint" style="text-align:center;margin-top:8px;display:none;"></div>
+    <div id="usdBlock" class="hint" style="text-align:center;margin-top:8px;display:none;"></div>
 
     <div class="notes">
       <strong>ملاحظات هامة:</strong>
@@ -439,13 +443,13 @@ const adjustableWrap = document.getElementById('adjustableWrap');
 const systemDesc = document.getElementById('systemDesc');
 const colorSelect = document.getElementById('colorSelect');
 const wasteInput = document.getElementById('wasteInput');
-const sarToggle = document.getElementById('sarToggle');
+const usdToggle = document.getElementById('usdToggle');
 const rateInput = document.getElementById('rateInput');
 const resultsBody = document.getElementById('resultsBody');
 const totalDrums = document.getElementById('totalDrums');
 const totalWeight = document.getElementById('totalWeight');
 const totalCost = document.getElementById('totalCost');
-const sarBlock = document.getElementById('sarBlock');
+const usdBlock = document.getElementById('usdBlock');
 const specialColorNote = document.getElementById('specialColorNote');
 
 SYSTEMS.forEach(sys=>{
@@ -458,6 +462,19 @@ SYSTEMS.forEach(sys=>{
 function fmt(n, decimals){
   if (decimals===undefined) decimals = 2;
   return Number(n).toLocaleString('en-US', {minimumFractionDigits:decimals, maximumFractionDigits:decimals});
+}
+
+// Source price list is in USD; SAR is the primary displayed currency (converted via the exchange rate),
+// with USD shown as an optional secondary figure when usdToggle is checked.
+function currentRate(){
+  return Math.max(0.0001, parseFloat(rateInput.value) || 3.75);
+}
+function sarText(usdValue){
+  const rate = currentRate();
+  const sar = usdValue * rate;
+  let out = `${fmt(sar,2)} ر.س`;
+  if (usdToggle.checked) out += ` <span class="hint" style="display:inline;">($${fmt(usdValue,2)})</span>`;
+  return out;
 }
 
 function currentSystem(){
@@ -514,9 +531,9 @@ function calculate(){
       <td>${c.name}</td>
       <td>${fmt(ratePerM2,3)} ${c.unit}/م²</td>
       <td>${fmt(exactQty,1)} ${c.unit}</td>
-      <td>${c.packSize} ${c.unit} — $${fmt(c.price,2)}</td>
+      <td>${c.packSize} ${c.unit} — ${sarText(c.price)}</td>
       <td><strong>${drumsNeeded}</strong></td>
-      <td>$${fmt(purchaseCost,2)}</td>
+      <td>${sarText(purchaseCost)}</td>
     </tr>`;
   });
 
@@ -527,14 +544,13 @@ function calculate(){
   if (sumWeightKG>0) weightParts.push(`${fmt(sumWeightKG,0)} كجم`);
   if (sumVolumeL>0) weightParts.push(`${fmt(sumVolumeL,0)} لتر`);
   totalWeight.textContent = weightParts.join(' + ') || '0';
-  totalCost.textContent = `$${fmt(sumCost,2)}`;
+  totalCost.innerHTML = `${fmt(sumCost*currentRate(),2)} ر.س`;
 
-  if (sarToggle.checked){
-    const rate = parseFloat(rateInput.value) || 0;
-    sarBlock.style.display = 'block';
-    sarBlock.textContent = `≈ ${fmt(sumCost*rate,2)} ريال سعودي (بسعر صرف تقديري ${fmt(rate,2)} — يمكن تعديله)`;
+  if (usdToggle.checked){
+    usdBlock.style.display = 'block';
+    usdBlock.textContent = `≈ $${fmt(sumCost,2)} أمريكي (بسعر صرف ${fmt(currentRate(),2)} ريال لكل دولار — يمكن تعديله)`;
   } else {
-    sarBlock.style.display = 'none';
+    usdBlock.style.display = 'none';
   }
 
   specialColorNote.style.display = colorSelect.value==='special' ? 'block' : 'none';
@@ -544,7 +560,7 @@ systemSelect.addEventListener('change', ()=>{ renderAdjustable(); calculate(); }
 areaInput.addEventListener('input', calculate);
 colorSelect.addEventListener('change', calculate);
 wasteInput.addEventListener('input', calculate);
-sarToggle.addEventListener('change', ()=>{ rateInput.disabled = !sarToggle.checked; calculate(); });
+usdToggle.addEventListener('change', calculate);
 rateInput.addEventListener('input', calculate);
 
 // init
