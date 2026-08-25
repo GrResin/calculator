@@ -162,7 +162,7 @@
   }
   th, td{
     padding:10px 10px;
-    text-align:center;
+    text-align:left;
     border-bottom:1px solid var(--border);
   }
   th{
@@ -187,7 +187,7 @@
     color:#fff;
     border-radius:12px;
     padding:16px;
-    text-align:center;
+    text-align:left;
   }
   .total-tile.accent{
     background:linear-gradient(135deg,#c9631a 0%,var(--accent-light) 100%);
@@ -312,7 +312,7 @@
       </div>
     </div>
 
-    <div id="usdBlock" class="hint" style="text-align:center;margin-top:8px;display:none;"></div>
+    <div id="usdBlock" class="hint" style="text-align:left;margin-top:8px;display:none;"></div>
 
     <div class="notes">
       <strong>ملاحظات هامة:</strong>
@@ -456,8 +456,8 @@ const EXCHANGE_RATE = 3.75; // SAR per 1 USD
 function sarText(usdValue){
   const sar = usdValue * EXCHANGE_RATE;
   let out = `${fmt(sar,2)} ر.س`;
-  if (usdToggle.checked) out += ` <span class="hint" style="display:inline;">($${fmt(usdValue,2)})</span>`;
-  return out;
+  if (usdToggle.checked) out += ` <bdi dir="ltr" class="hint" style="display:inline;">($${fmt(usdValue,2)})</bdi>`;
+  return `<bdi dir="ltr">${out}</bdi>`;
 }
 
 function currentSystem(){
@@ -510,9 +510,9 @@ function calculate(){
 
     rows += `<tr>
       <td>${c.name}</td>
-      <td>${fmt(ratePerM2,3)} ${c.unit}/م²</td>
-      <td>${fmt(exactQty,1)} ${c.unit}</td>
-      <td>${c.packSize} ${c.unit} — ${sarText(c.price)}</td>
+      <td><bdi dir="ltr">${fmt(ratePerM2,3)} ${c.unit}/م²</bdi></td>
+      <td><bdi dir="ltr">${fmt(exactQty,1)} ${c.unit}</bdi></td>
+      <td><bdi dir="ltr">${c.packSize} ${c.unit}</bdi> — ${sarText(c.price)}</td>
       <td><strong>${drumsNeeded}</strong></td>
       <td>${sarText(purchaseCost)}</td>
     </tr>`;
@@ -525,11 +525,11 @@ function calculate(){
   if (sumWeightKG>0) weightParts.push(`${fmt(sumWeightKG,0)} كجم`);
   if (sumVolumeL>0) weightParts.push(`${fmt(sumVolumeL,0)} لتر`);
   totalWeight.textContent = weightParts.join(' + ') || '0';
-  totalCost.innerHTML = `${fmt(sumCost*EXCHANGE_RATE,2)} ر.س`;
+  totalCost.innerHTML = `<bdi dir="ltr">${fmt(sumCost*EXCHANGE_RATE,2)} ر.س</bdi>`;
 
   if (usdToggle.checked){
     usdBlock.style.display = 'block';
-    usdBlock.textContent = `≈ $${fmt(sumCost,2)} أمريكي (بسعر صرف تقديري ${fmt(EXCHANGE_RATE,2)} ريال لكل دولار)`;
+    usdBlock.innerHTML = `≈ <bdi dir="ltr">$${fmt(sumCost,2)}</bdi> أمريكي (بسعر صرف تقديري <bdi dir="ltr">${fmt(EXCHANGE_RATE,2)}</bdi> ريال لكل دولار)`;
   } else {
     usdBlock.style.display = 'none';
   }
