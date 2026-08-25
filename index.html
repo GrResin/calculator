@@ -288,7 +288,7 @@
             <th>المادة</th>
             <th>الاستهلاك / م²</th>
             <th>الكمية الفعلية المطلوبة</th>
-            <th>حجم العبوة</th>
+            <th>حجم العبوة / سعر الوحدة</th>
             <th>عدد البراميل (شراء)</th>
             <th>التكلفة التقديرية</th>
           </tr>
@@ -460,6 +460,15 @@ function sarText(usdValue){
   return `<bdi dir="ltr">${out}</bdi>`;
 }
 
+// Unit price in the same compact "value/unit" style as the consumption column (e.g. "17.33 ر.س/KG")
+function unitPriceText(c){
+  const usdPerUnit = c.price / c.packSize;
+  const sarPerUnit = usdPerUnit * EXCHANGE_RATE;
+  let out = `${fmt(sarPerUnit,2)} ر.س/${c.unit}`;
+  if (usdToggle.checked) out += ` <bdi dir="ltr" class="hint" style="display:inline;">($${fmt(usdPerUnit,2)}/${c.unit})</bdi>`;
+  return `<bdi dir="ltr">${out}</bdi>`;
+}
+
 function currentSystem(){
   return SYSTEMS.find(s=>s.id===systemSelect.value);
 }
@@ -512,7 +521,7 @@ function calculate(){
       <td>${c.name}</td>
       <td><bdi dir="ltr">${fmt(ratePerM2,3)} ${c.unit}/م²</bdi></td>
       <td><bdi dir="ltr">${fmt(exactQty,1)} ${c.unit}</bdi></td>
-      <td><bdi dir="ltr">${c.packSize} ${c.unit}</bdi> — ${sarText(c.price)}</td>
+      <td><bdi dir="ltr">${c.packSize} ${c.unit}</bdi> — ${unitPriceText(c)}</td>
       <td><strong>${drumsNeeded}</strong></td>
       <td>${sarText(purchaseCost)}</td>
     </tr>`;
