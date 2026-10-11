@@ -247,6 +247,8 @@
     background:#fff;
   }
   .sys-link:hover, .sys-link:focus{border-color:var(--navy-light);background:#fbf4f9;}
+  .nw{white-space:nowrap;}
+  #resultsTable th, #resultsTable td{text-align:right;}
   .all-link{text-align:center;font-size:.85rem;margin:0;}
   .all-link a{color:var(--navy-light);}
 </style>
@@ -582,19 +584,21 @@ const EXCHANGE_RATE = 3.75; // SAR per 1 USD
 const ON_REQUEST = 'يُحدد عند الطلب';
 function sarText(usdValue){
   const sar = usdValue * EXCHANGE_RATE;
-  let out = `ر.س ${fmt(sar,2)}`;
-  if (usdToggle.checked) out += ` <bdi dir="ltr" class="hint" style="display:inline;">($${fmt(usdValue,2)})</bdi>`;
-  return `<bdi dir="ltr">${out}</bdi>`;
+  let out = `<span class="nw">${fmt(sar,2)} ر.س</span>`;
+  if (usdToggle.checked) out += ` <span class="hint nw" style="display:inline;">(<bdi dir="ltr">$${fmt(usdValue,2)}</bdi>)</span>`;
+  return out;
 }
 
-// Unit price in the same compact "unit/value" style as the consumption column (e.g. "ر.س/KG 17.33")
+// Units are shown in Arabic, number first then unit (e.g. "17.33 ر.س/كجم")
+const UNIT_AR = { KG:'كجم', L:'لتر' };
 function unitPriceText(c){
   if (c.price == null) return ON_REQUEST;
   const usdPerUnit = c.price / c.packSize;
   const sarPerUnit = usdPerUnit * EXCHANGE_RATE;
-  let out = `ر.س/${c.unit} ${fmt(sarPerUnit,2)}`;
-  if (usdToggle.checked) out += ` <bdi dir="ltr" class="hint" style="display:inline;">($/${c.unit} ${fmt(usdPerUnit,2)})</bdi>`;
-  return `<bdi dir="ltr">${out}</bdi>`;
+  const u = UNIT_AR[c.unit];
+  let out = `<span class="nw">${fmt(sarPerUnit,2)} ر.س/${u}</span>`;
+  if (usdToggle.checked) out += ` <span class="hint nw" style="display:inline;">(<bdi dir="ltr">$${fmt(usdPerUnit,2)}</bdi>/${u})</span>`;
+  return out;
 }
 
 function renderIndex(){
@@ -680,9 +684,9 @@ function calculate(){
 
     rows += `<tr>
       <td>${c.name}</td>
-      <td><bdi dir="ltr">${c.unit}/م² ${fmt(ratePerM2,3)}</bdi></td>
-      <td><bdi dir="ltr">${c.unit} ${fmt(exactQty,1)}</bdi></td>
-      <td><bdi dir="ltr">${c.unit} ${c.packSize}</bdi> — ${unitPriceText(c)}</td>
+      <td class="nw">${fmt(ratePerM2,3)} ${UNIT_AR[c.unit]}/م²</td>
+      <td class="nw">${fmt(exactQty,1)} ${UNIT_AR[c.unit]}</td>
+      <td><span class="nw">${c.packSize} ${UNIT_AR[c.unit]}</span> — ${unitPriceText(c)}</td>
       <td><strong>${drumsNeeded}</strong></td>
       <td>${hasPrice ? sarText(purchaseCost) : ON_REQUEST}</td>
     </tr>`;
@@ -700,7 +704,7 @@ function calculate(){
     totalCost.textContent = ON_REQUEST;
     totalCostLbl.textContent = 'التكلفة التقديرية الإجمالية';
   } else {
-    totalCost.innerHTML = `<bdi dir="ltr">${fmt(sumCost*EXCHANGE_RATE,2)} ر.س</bdi>`;
+    totalCost.textContent = `${fmt(sumCost*EXCHANGE_RATE,2)} ر.س`;
     totalCostLbl.textContent = unpriced ? 'التكلفة التقديرية (لا تشمل المواد غير المسعّرة)' : 'التكلفة التقديرية الإجمالية';
   }
 
