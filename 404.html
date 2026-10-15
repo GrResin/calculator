@@ -10,7 +10,8 @@
   var sub = (onGithub || parts[0] === 'calculator') && parts.length;   // site lives in a sub-folder
   var base = sub ? '/' + parts[0] + '/' : '/';
   var seg = (sub ? parts[1] : parts[0]) || '';
-  location.replace(base + (seg ? '?system=' + encodeURIComponent(seg) : ''));
+  var extra = location.search.replace(/^\?/, '&');
+  location.replace(base + (seg ? '?system=' + encodeURIComponent(seg) + extra : location.search));
 })();
 </script>
 </head>
