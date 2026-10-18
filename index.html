@@ -4,270 +4,209 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>حاسبة استهلاك وتكلفة أنظمة الأرضيات الإيبوكسية</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --navy:#6d0f56;
-    --navy-light:#a7157f;
-    --accent:#c2298f;
-    --accent-light:#e563b3;
-    --bg:#f7f3f6;
+    --brand:#6d0f56;
+    --brand-2:#a7157f;
+    --brand-soft:#f6e9f2;
+    --bg:#f6f4f5;
     --card:#ffffff;
-    --border:#e7dbe3;
-    --text:#231522;
-    --text-mute:#6b5867;
-    --good:#1c7c4b;
+    --border:#e6dde3;
+    --text:#221620;
+    --mute:#6e5f6a;
+    --wa:#1fa855;
+    --wa-dark:#17883f;
+    --radius:14px;
   }
   *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
   body{
     margin:0;
-    font-family:"Segoe UI","Tahoma",Arial,sans-serif;
+    font-family:"IBM Plex Sans Arabic","Segoe UI",Tahoma,Arial,sans-serif;
     background:var(--bg);
     color:var(--text);
-    line-height:1.55;
+    line-height:1.6;
   }
   header{
-    background:linear-gradient(135deg,var(--navy) 0%,var(--navy-light) 100%);
+    position:relative;
+    background:linear-gradient(135deg,var(--brand) 0%,var(--brand-2) 100%);
     color:#fff;
-    padding:24px 24px 22px;
+    padding:20px 16px 22px;
     text-align:center;
   }
   .logo-badge{
     display:inline-flex;
-    align-items:center;
-    justify-content:center;
     background:#fff;
-    border-radius:16px;
-    padding:10px 22px;
-    margin-bottom:14px;
+    border-radius:12px;
+    padding:8px 18px;
+    margin-bottom:10px;
     box-shadow:0 4px 14px rgba(0,0,0,.18);
   }
-  .logo-badge img{
-    height:52px;
-    display:block;
+  .logo-badge img{height:44px;display:block;}
+  header h1{margin:0 0 4px;font-size:1.35rem;font-weight:700;}
+  header p{margin:0 auto;max-width:640px;color:#f3dcec;font-size:.9rem;}
+  .lang-btn{
+    position:absolute;
+    top:14px;
+    inset-inline-end:14px;
+    background:rgba(255,255,255,.16);
+    color:#fff;
+    border:1.5px solid rgba(255,255,255,.55);
+    border-radius:999px;
+    padding:6px 14px;
+    font:inherit;
+    font-size:.85rem;
+    font-weight:600;
+    cursor:pointer;
   }
-  header h1{
-    margin:0 0 6px;
-    font-size:1.5rem;
-    font-weight:700;
-  }
-  header p{
-    margin:0;
-    color:#cfe0ee;
-    font-size:.92rem;
-  }
-  .wrap{
-    max-width:1280px;
-    margin:0 auto;
-    padding:22px 24px 60px;
+  .lang-btn:hover, .lang-btn:focus-visible{background:rgba(255,255,255,.28);outline:none;}
+
+  .wrap{max-width:1200px;margin:0 auto;padding:20px 16px 48px;}
+  .layout{display:grid;gap:18px;}
+  @media (min-width:960px){
+    .layout{grid-template-columns:minmax(320px,380px) 1fr;align-items:start;}
+    .layout > .inputs{position:sticky;top:16px;}
   }
   .card{
     background:var(--card);
     border:1px solid var(--border);
-    border-radius:14px;
-    padding:22px;
-    margin-bottom:18px;
-    box-shadow:0 1px 3px rgba(15,43,70,.06);
+    border-radius:var(--radius);
+    padding:20px;
+    box-shadow:0 1px 3px rgba(60,20,50,.05);
   }
+  .card + .card{margin-top:18px;}
   .card h2{
-    margin:0 0 16px;
-    font-size:1.08rem;
-    color:var(--navy);
+    margin:0 0 14px;
+    font-size:1.05rem;
+    color:var(--brand);
     display:flex;
     align-items:center;
     gap:8px;
   }
   .badge{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    width:24px;height:24px;
-    background:var(--accent);
-    color:#fff;
-    border-radius:50%;
-    font-size:.8rem;
-    font-weight:700;
-    flex:none;
+    display:inline-flex;align-items:center;justify-content:center;
+    width:24px;height:24px;flex:none;
+    background:var(--brand-2);color:#fff;border-radius:50%;
+    font-size:.8rem;font-weight:700;
   }
-  label{
-    display:block;
-    font-size:.86rem;
-    color:var(--text-mute);
-    margin-bottom:6px;
-    font-weight:600;
+  .system-desc{
+    background:var(--brand-soft);
+    border-radius:10px;
+    padding:10px 12px;
+    font-size:.85rem;
+    color:var(--mute);
+    margin:0 0 16px;
   }
-  select, input[type=number]{
+  label{display:block;font-size:.86rem;color:var(--mute);margin-bottom:6px;font-weight:600;}
+  select, input[type=number], input[type=text]{
     width:100%;
     padding:11px 12px;
     border:1.5px solid var(--border);
-    border-radius:9px;
-    font-size:.98rem;
+    border-radius:10px;
+    font:inherit;
+    font-size:1rem;
     background:#fff;
     color:var(--text);
-    font-family:inherit;
   }
-  select:focus, input:focus{
-    outline:none;
-    border-color:var(--navy-light);
-  }
-  .grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:16px;
-  }
-  .grid3{
-    display:grid;
-    grid-template-columns:1fr 1fr 1fr;
-    gap:16px;
-  }
-  @media (max-width:640px){
-    .grid, .grid3{grid-template-columns:1fr;}
-  }
-  .field{margin-bottom:4px;}
-  .hint{
-    font-size:.78rem;
-    color:var(--text-mute);
-    margin-top:6px;
-  }
-  .layer-slider-row{
-    display:flex;
-    align-items:center;
-    gap:10px;
-  }
-  input[type=range]{
-    flex:1;
-    accent-color:var(--accent);
-  }
+  select:focus, input:focus{outline:none;border-color:var(--brand-2);box-shadow:0 0 0 3px rgba(167,21,127,.15);}
+  .field + .field{margin-top:16px;}
+  .area-row{position:relative;}
+  .area-row input{padding-inline-end:48px;font-size:1.15rem;font-weight:700;}
+  .area-row .suffix{position:absolute;inset-inline-end:14px;top:50%;transform:translateY(-50%);color:var(--mute);font-weight:600;pointer-events:none;}
+  .hint{font-size:.78rem;color:var(--mute);margin-top:6px;}
+  .layer-slider-row{display:flex;align-items:center;gap:10px;}
+  input[type=range]{flex:1;accent-color:var(--brand-2);height:28px;}
   .layer-val{
-    min-width:52px;
-    text-align:center;
-    font-weight:700;
-    background:var(--navy);
-    color:#fff;
-    border-radius:8px;
-    padding:6px 8px;
-    font-size:.9rem;
+    min-width:64px;text-align:center;font-weight:700;
+    background:var(--brand);color:#fff;border-radius:8px;padding:6px 8px;font-size:.9rem;
   }
-  .system-desc{
-    background:#f0f5fa;
-    border-radius:10px;
-    padding:12px 14px;
-    font-size:.85rem;
-    color:var(--text-mute);
-    margin-top:10px;
+  .toggle-row{display:flex;align-items:center;gap:8px;margin-top:16px;font-size:.82rem;color:var(--mute);}
+  .toggle-row input{width:auto;margin:0;}
+  .toggle-row label{margin:0;font-weight:500;}
+
+  /* materials table; becomes stacked cards on phones */
+  table{width:100%;border-collapse:collapse;font-size:.9rem;}
+  th, td{padding:10px;text-align:start;border-bottom:1px solid var(--border);vertical-align:top;}
+  th{background:#f8f2f6;color:var(--brand);font-size:.78rem;font-weight:700;}
+  td.drums strong{font-size:1.05rem;color:var(--brand);}
+  @media (max-width:700px){
+    thead{display:none;}
+    table, tbody, tr, td{display:block;width:100%;}
+    tr{border:1px solid var(--border);border-radius:12px;padding:6px 12px;margin-bottom:10px;}
+    td{display:flex;justify-content:space-between;gap:12px;border:0;padding:5px 0;text-align:end;}
+    td::before{content:attr(data-label);color:var(--mute);font-size:.8rem;font-weight:600;text-align:start;}
+    td.name{display:block;font-weight:700;color:var(--text);padding:6px 0 8px;border-bottom:1px dashed var(--border);margin-bottom:4px;text-align:start;}
+    td.name::before{content:none;}
   }
-  table{
-    width:100%;
-    border-collapse:collapse;
-    font-size:.9rem;
-  }
-  th, td{
-    padding:10px 10px;
-    text-align:left;
-    border-bottom:1px solid var(--border);
-  }
-  th{
-    background:#eef3f7;
-    color:var(--navy);
-    font-size:.8rem;
-    font-weight:700;
-  }
-  td:first-child, th:first-child{
-    text-align:right;
-  }
-  tbody tr:hover{background:#fafbfc;}
-  .totals{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:12px;
-    margin-top:18px;
-  }
-  @media (max-width:640px){ .totals{grid-template-columns:1fr;} }
-  .total-tile{
-    background:linear-gradient(135deg,var(--navy) 0%,var(--navy-light) 100%);
-    color:#fff;
-    border-radius:12px;
-    padding:16px;
-    text-align:center;
-  }
-  .total-tile.accent{
-    background:linear-gradient(135deg,#c9631a 0%,var(--accent-light) 100%);
-  }
-  .total-tile .num{
-    font-size:1.5rem;
-    font-weight:800;
-    display:block;
-    margin-bottom:2px;
-  }
-  .total-tile .lbl{
-    font-size:.78rem;
-    opacity:.9;
-  }
+
+  .totals{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:16px;}
+  .total-tile{background:var(--brand-soft);border-radius:12px;padding:14px;text-align:center;}
+  .total-tile .num{display:block;font-size:1.35rem;font-weight:700;color:var(--brand);}
+  .total-tile .lbl{font-size:.78rem;color:var(--mute);}
+  .bill{margin-top:12px;border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+  .bill-row{display:flex;justify-content:space-between;gap:12px;padding:10px 14px;font-size:.92rem;}
+  .bill-row + .bill-row{border-top:1px solid var(--border);}
+  .bill-row.grand{background:linear-gradient(135deg,var(--brand) 0%,var(--brand-2) 100%);color:#fff;font-weight:700;font-size:1.05rem;}
   .notes{
-    background:#fff7ec;
-    border:1px solid #f1d9ad;
-    border-radius:10px;
-    padding:14px 16px;
-    font-size:.83rem;
-    color:#6b4d16;
-    margin-top:16px;
+    background:#fff8ee;border:1px solid #f0dcb8;border-radius:10px;
+    padding:12px 14px;font-size:.82rem;color:#6b4d16;margin-top:16px;
   }
-  .notes ul{margin:6px 0 0; padding-inline-start:18px;}
+  .notes ul{margin:6px 0 0;padding-inline-start:18px;}
   .notes li{margin-bottom:4px;}
-  .toggle-row{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    margin-top:10px;
-    font-size:.85rem;
-    color:var(--text-mute);
+
+  /* order */
+  .order-grid{display:grid;gap:18px;align-items:center;}
+  @media (min-width:960px){ .order-grid.has-qr{grid-template-columns:1fr auto;} }
+  .wa-btn{
+    display:flex;align-items:center;justify-content:center;gap:10px;
+    width:100%;margin-top:14px;padding:14px 18px;
+    background:var(--wa);color:#fff;border:0;border-radius:12px;
+    font:inherit;font-size:1.05rem;font-weight:700;text-decoration:none;cursor:pointer;
   }
-  .toggle-row input{width:auto;}
-  footer{
-    text-align:center;
-    color:var(--text-mute);
-    font-size:.78rem;
-    padding:10px 16px 30px;
+  .wa-btn:hover, .wa-btn:focus-visible{background:var(--wa-dark);outline:none;}
+  .wa-btn svg{width:22px;height:22px;flex:none;}
+  .wa-btn[aria-disabled=true]{opacity:.5;pointer-events:none;}
+  .qr-box{display:none;text-align:center;}
+  @media (min-width:960px){ .qr-box.on{display:block;} }
+  #qr{background:#fff;padding:10px;border:1px solid var(--border);border-radius:12px;display:inline-block;}
+  #qr img, #qr canvas{display:block;width:200px;height:200px;}
+  .qr-box .hint{max-width:200px;margin-inline:auto;}
+
+  /* phone: total + order always reachable */
+  .sticky-bar{display:none;}
+  @media (max-width:959px){
+    .sticky-bar.on{
+      display:flex;align-items:center;gap:12px;
+      position:fixed;inset-inline:0;bottom:0;z-index:5;
+      background:#fff;border-top:1px solid var(--border);
+      padding:10px 16px calc(10px + env(safe-area-inset-bottom));
+      box-shadow:0 -4px 16px rgba(60,20,50,.08);
+    }
+    .sticky-bar .sb-total{flex:1;min-width:0;}
+    .sticky-bar .sb-total .lbl{display:block;font-size:.72rem;color:var(--mute);}
+    .sticky-bar .sb-total .num{font-weight:700;color:var(--brand);font-size:1.05rem;}
+    .sticky-bar .wa-btn{width:auto;margin:0;padding:11px 16px;font-size:.95rem;}
+    body.has-bar{padding-bottom:84px;}
   }
-  .empty-note{
-    text-align:center;
-    color:var(--text-mute);
-    font-size:.85rem;
-    padding:10px;
-  }
+
+  footer{text-align:center;color:var(--mute);font-size:.78rem;padding:10px 16px 30px;}
   .sys-list{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
   @media (max-width:640px){ .sys-list{grid-template-columns:1fr;} }
   .sys-link{
-    display:block;
-    padding:14px 16px;
-    border:1.5px solid var(--border);
-    border-radius:10px;
-    color:var(--navy);
-    font-weight:600;
-    text-decoration:none;
-    background:#fff;
+    display:block;padding:14px 16px;border:1.5px solid var(--border);border-radius:10px;
+    color:var(--brand);font-weight:600;text-decoration:none;background:#fff;
   }
-  .sys-link:hover, .sys-link:focus{border-color:var(--navy-light);background:#fbf4f9;}
+  .sys-link:hover, .sys-link:focus-visible{border-color:var(--brand-2);background:#fbf4f9;outline:none;}
   .nw{white-space:nowrap;}
-  #resultsTable th, #resultsTable td{text-align:start;}
-  header{position:relative;}
-  .lang-btn{
-    position:absolute;
-    top:16px;
-    inset-inline-end:16px;
-    background:rgba(255,255,255,.16);
-    color:#fff;
-    border:1.5px solid rgba(255,255,255,.55);
-    border-radius:999px;
-    padding:7px 16px;
-    font:inherit;
-    font-size:.88rem;
-    font-weight:600;
-    cursor:pointer;
+  .all-link{text-align:center;font-size:.85rem;margin:18px 0 0;}
+  .all-link a{color:var(--brand-2);}
+  @media (max-width:640px){
+    header h1{font-size:1.15rem;}
+    .lang-btn{top:10px;inset-inline-end:10px;padding:4px 11px;font-size:.8rem;}
   }
-  .lang-btn:hover, .lang-btn:focus-visible{background:rgba(255,255,255,.28);outline:none;}
-  @media (max-width:640px){ .lang-btn{top:10px;inset-inline-end:10px;padding:5px 12px;font-size:.8rem;} }
-  .all-link{text-align:center;font-size:.85rem;margin:0;}
-  .all-link a{color:var(--navy-light);}
 </style>
 </head>
 <body>
@@ -290,79 +229,113 @@
   </div>
 
   <div id="calcView" style="display:none;">
-  <div class="card">
-    <h2><span class="badge">1</span> <span id="systemName"></span></h2>
-    <div id="systemDesc" class="system-desc" style="margin:0 0 16px;"></div>
+  <div class="layout">
+    <div class="card inputs">
+      <h2><span class="badge">1</span> <span id="systemName"></span></h2>
+      <div id="systemDesc" class="system-desc"></div>
 
-    <div class="field">
-      <label for="areaInput" data-i18n="area"></label>
-      <input type="number" id="areaInput" min="1" step="1" value="1000">
+      <div class="field">
+        <label for="areaInput" data-i18n="area"></label>
+        <div class="area-row">
+          <input type="number" id="areaInput" min="1" step="1" value="1000" inputmode="decimal">
+          <span class="suffix" id="areaSuffix"></span>
+        </div>
+      </div>
+
+      <div id="adjustableWrap" class="field"></div>
+
+      <div class="field" id="colorField">
+        <label for="colorSelect" data-i18n="color"></label>
+        <select id="colorSelect">
+          <option value="standard" id="stdColorOption"></option>
+          <option value="special" id="specialColorOption"></option>
+        </select>
+      </div>
+
+      <div class="toggle-row">
+        <input type="checkbox" id="usdToggle">
+        <label for="usdToggle" data-i18n="usdToggle"></label>
+      </div>
     </div>
 
-    <div id="adjustableWrap" class="field" style="margin-top:14px;"></div>
+    <div>
+      <div class="card">
+        <h2><span class="badge">2</span> <span data-i18n="materials"></span></h2>
+        <table id="resultsTable">
+          <thead>
+            <tr>
+              <th data-i18n="thMaterial"></th>
+              <th data-i18n="thRate"></th>
+              <th data-i18n="thQty"></th>
+              <th data-i18n="thPack"></th>
+              <th data-i18n="thDrums"></th>
+              <th data-i18n="thCost"></th>
+            </tr>
+          </thead>
+          <tbody id="resultsBody"></tbody>
+        </table>
 
-    <div class="field" id="colorField" style="margin-top:16px;">
-      <label for="colorSelect" data-i18n="color"></label>
-      <select id="colorSelect">
-        <option value="standard" id="stdColorOption"></option>
-        <option value="special" id="specialColorOption"></option>
-      </select>
-    </div>
+        <div class="totals">
+          <div class="total-tile">
+            <span class="num" id="totalDrums">0</span>
+            <span class="lbl" data-i18n="totalDrums"></span>
+          </div>
+          <div class="total-tile">
+            <span class="num" id="totalWeight">0</span>
+            <span class="lbl" data-i18n="totalWeight"></span>
+          </div>
+        </div>
 
-    <div class="toggle-row">
-      <input type="checkbox" id="usdToggle">
-      <label for="usdToggle" style="margin:0;" data-i18n="usdToggle"></label>
+        <div class="bill" id="bill">
+          <div class="bill-row"><span id="subtotalLbl"></span><span class="nw" id="subtotal"></span></div>
+          <div class="bill-row"><span data-i18n="vat"></span><span class="nw" id="vatAmount"></span></div>
+          <div class="bill-row grand"><span data-i18n="grandTotal"></span><span class="nw" id="totalCost"></span></div>
+        </div>
+
+        <div id="usdBlock" class="hint" style="text-align:center;margin-top:8px;display:none;"></div>
+
+        <div class="notes">
+          <strong data-i18n="notesTitle"></strong>
+          <ul id="notesList"></ul>
+        </div>
+      </div>
+
+      <div class="card" id="orderCard">
+        <h2><span class="badge">3</span> <span data-i18n="orderTitle"></span></h2>
+        <div class="order-grid" id="orderGrid">
+          <div>
+            <p class="hint" style="margin:0 0 12px;font-size:.86rem;" data-i18n="orderIntro"></p>
+            <div class="field">
+              <label for="cityInput" data-i18n="city"></label>
+              <input type="text" id="cityInput" autocomplete="address-level2">
+            </div>
+            <a class="wa-btn" id="waBtn" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.2-.2-.5-.3Z"/></svg>
+              <span data-i18n="orderBtn"></span>
+            </a>
+            <p class="hint" data-i18n="orderAfter"></p>
+          </div>
+          <div class="qr-box" id="qrBox">
+            <div id="qr"></div>
+            <p class="hint" data-i18n="qrHint"></p>
+          </div>
+        </div>
+      </div>
+
+      <p class="all-link"><a id="allSystemsLink" href="./" data-i18n="allSystems"></a></p>
     </div>
   </div>
-
-  <div class="card">
-    <h2><span class="badge">2</span> <span data-i18n="materials"></span></h2>
-    <div style="overflow-x:auto;">
-      <table id="resultsTable">
-        <thead>
-          <tr>
-            <th data-i18n="thMaterial"></th>
-            <th data-i18n="thRate"></th>
-            <th data-i18n="thQty"></th>
-            <th data-i18n="thPack"></th>
-            <th data-i18n="thDrums"></th>
-            <th data-i18n="thCost"></th>
-          </tr>
-        </thead>
-        <tbody id="resultsBody"></tbody>
-      </table>
-    </div>
-
-    <div class="totals">
-      <div class="total-tile">
-        <span class="num" id="totalDrums">0</span>
-        <span class="lbl" data-i18n="totalDrums"></span>
-      </div>
-      <div class="total-tile">
-        <span class="num" id="totalWeight">0</span>
-        <span class="lbl" data-i18n="totalWeight"></span>
-      </div>
-      <div class="total-tile accent">
-        <span class="num" id="totalCost">0</span>
-        <span class="lbl" id="totalCostLbl"></span>
-      </div>
-    </div>
-
-    <div id="usdBlock" class="hint" style="text-align:center;margin-top:8px;display:none;"></div>
-
-    <div class="notes">
-      <strong data-i18n="notesTitle"></strong>
-      <ul id="notesList"></ul>
-    </div>
-  </div>
-
-  <p class="all-link"><a id="allSystemsLink" href="./" data-i18n="allSystems"></a></p>
   </div>
 
 </div>
 
+<div class="sticky-bar" id="stickyBar">
+  <div class="sb-total"><span class="lbl" data-i18n="grandTotal"></span><span class="num" id="sbTotal"></span></div>
+  <a class="wa-btn" id="sbWaBtn" target="_blank" rel="noopener"><span data-i18n="orderBtnShort"></span></a>
+</div>
 <footer data-i18n="footer"></footer>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
 // ---------- UI TEXT (Arabic / English) ----------
 const UI = {
@@ -379,7 +352,6 @@ const UI = {
     thMaterial:'المادة', thRate:'الاستهلاك / م²', thQty:'الكمية الفعلية المطلوبة',
     thPack:'حجم العبوة / سعر الوحدة', thDrums:'عدد البراميل (شراء)', thCost:'التكلفة التقديرية',
     totalDrums:'إجمالي عدد البراميل/العبوات', totalWeight:'إجمالي وزن/حجم المواد',
-    totalCost:'التكلفة التقديرية الإجمالية', totalCostPartial:'التكلفة التقديرية (لا تشمل المواد غير المسعّرة)',
     notesTitle:'ملاحظات هامة:',
     allSystems:'عرض كل الأنظمة',
     footer:'حاسبة تقديرية للأغراض الاسترشادية — بناءً على معدلات استهلاك وأسعار Graffiti Resin. يُنصح بمراجعة العرض الفني النهائي قبل الشراء.',
@@ -394,6 +366,20 @@ const UI = {
     drumsRounded:'عدد البراميل مقرَّب لأعلى لأقرب عبوة كاملة، لأن الشراء يكون بعبوات كاملة فقط.',
     unpriced:'بعض المواد أعلاه غير مسعّرة حالياً — يُحدد سعرها عند الطلب، وهي غير مدرجة في إجمالي التكلفة.',
     specialChosen:'تم اختيار لون خاص: ستُضاف تكلفة تلوين إضافية يتم تحديدها عند الطلب — غير مدرجة في الحساب أعلاه.',
+    specialPriced:'لون خاص — محسوب بسعر عبوات اللون الخاص',
+    specialPricedNote:'تم احتساب الطبقة النهائية بسعر عبوات اللون الخاص من قائمة الأسعار.',
+    subtotal:'إجمالي المواد (غير شامل الضريبة)', subtotalPartial:'إجمالي المواد المسعّرة (غير شامل الضريبة)',
+    vat:'ضريبة القيمة المضافة 15%', grandTotal:'الإجمالي شامل الضريبة',
+    orderTitle:'اطلب المواد عبر واتساب',
+    orderIntro:'أرسل هذا الحساب لفريق جرافيتي على واتساب، وسيتواصل معك لتأكيد الطلب والسعر النهائي والتوصيل.',
+    city:'المدينة (اختياري)',
+    orderBtn:'إرسال الطلب على واتساب', orderBtnShort:'اطلب الآن',
+    orderAfter:'سيفتح واتساب برسالة جاهزة فيها النظام والمساحة والكميات — اضغط إرسال فقط.',
+    qrHint:'أو امسح الكود بجوالك لإرسال الطلب',
+    msgHead:'مرحباً، أرغب بطلب مواد حسب حاسبة جرافيتي:', msgHeadShort:'طلب مواد من الحاسبة:',
+    msgSystem:'النظام', msgArea:'المساحة', msgColor:'اللون', msgCity:'المدينة', msgMaterials:'المواد المطلوبة',
+    msgSpecial:'لون خاص', msgLink:'رابط الحساب',
+    msgPack:(n,size,u)=>`${n} × عبوة ${size} ${u}`,
     unit:{ KG:'كجم', L:'لتر' }, m2:'م²', cur:'ر.س'
   },
   en: {
@@ -409,7 +395,6 @@ const UI = {
     thMaterial:'Material', thRate:'Consumption / m²', thQty:'Required quantity',
     thPack:'Pack size / unit price', thDrums:'Drums to buy', thCost:'Estimated cost',
     totalDrums:'Total drums / packs', totalWeight:'Total material weight / volume',
-    totalCost:'Total estimated cost', totalCostPartial:'Estimated cost (excludes unpriced materials)',
     notesTitle:'Important notes:',
     allSystems:'View all systems',
     footer:'Estimate for guidance only — based on Graffiti Resin consumption rates and prices. Please review the final technical offer before purchasing.',
@@ -424,17 +409,32 @@ const UI = {
     drumsRounded:'Drum counts are rounded up to the nearest full pack, since materials are sold in full packs only.',
     unpriced:'Some materials above are not priced yet — their price is quoted on request and they are not included in the total cost.',
     specialChosen:'Special colour selected: an extra tinting cost will be quoted on order — not included in the calculation above.',
+    specialPriced:'Special colour — priced at the special-colour pack price',
+    specialPricedNote:'The top coat is priced at the special-colour pack price from the price list.',
+    subtotal:'Materials subtotal (excl. VAT)', subtotalPartial:'Priced materials subtotal (excl. VAT)',
+    vat:'VAT 15%', grandTotal:'Total incl. VAT',
+    orderTitle:'Order the materials on WhatsApp',
+    orderIntro:'Send this calculation to the Graffiti team on WhatsApp; they will contact you to confirm the order, final price and delivery.',
+    city:'City (optional)',
+    orderBtn:'Send order on WhatsApp', orderBtnShort:'Order now',
+    orderAfter:'WhatsApp opens with a ready message listing the system, area and quantities — just tap send.',
+    qrHint:'Or scan the code with your phone to send the order',
+    msgHead:'Hello, I would like to order materials from the Graffiti calculator:', msgHeadShort:'Material order from the calculator:',
+    msgSystem:'System', msgArea:'Area', msgColor:'Colour', msgCity:'City', msgMaterials:'Materials',
+    msgSpecial:'Special colour', msgLink:'Calculation link',
+    msgPack:(n,size,u)=>`${n} × ${size} ${u} pack`,
     unit:{ KG:'kg', L:'L' }, m2:'m²', cur:'SAR'
   }
 };
 
 // ---------- DATA ----------
-// Consumption rates: Graffiti consumption sheet. Prices: Graffiti Resin distributor price list
-// ("سعر العميل", SAR per pack). sar(x) stores them in USD because the page keeps USD internally.
+// Consumption rates: Graffiti consumption sheet. Prices: Graffiti Resin price list ("سعر العميل", SAR per pack,
+// excl. VAT), checked 2026-10-18 against the Projects KB article "قاعدة بيانات أسعار العبوات الرسمية" (Aug list). sar(x) stores them in USD because the page keeps USD internally.
 const sar = v => v / 3.75;
 // Text fields are [Arabic, English].
 // id            -> the link of the system: /calculator/<id>/
 // price         -> USD per full pack, written as sar(<SAR price>). null = not in the price list (shown as "on request")
+// sp            -> special-colour pack price (top coats only). Missing on a coloured system = tinting quoted on order
 // baseRatePerM2 -> consumption (kg or L per m²) at the system's DEFAULT adjustable value
 // scales        -> true: quantity scales with the adjustable field (layers / thickness); false: fixed
 // adjustable    -> null when the system has no layers/thickness control
@@ -459,7 +459,7 @@ const SYSTEMS = [
     stdColor: GREY, putty: true,
     components: [
       SB102,
-      { name:['إيبوكسي أرضيات SB 110 (الطبقة النهائية)', 'Epoxy Coating SB 110 (top coat)'], unit:'KG', packSize:21, price:sar(375), baseRatePerM2:0.5, scales:true },
+      { name:['إيبوكسي أرضيات SB 110 (الطبقة النهائية)', 'Epoxy Coating SB 110 (top coat)'], unit:'KG', packSize:21, price:sar(375), sp:sar(425), baseRatePerM2:0.5, scales:true },
       THINNER
     ]
   },
@@ -472,7 +472,7 @@ const SYSTEMS = [
     stdColor: GREY, putty: true,
     components: [
       SF101,
-      { name:['إيبوكسي أرضيات SF 120 (الطبقة النهائية)', 'Epoxy Coating SF 120 (top coat)'], unit:'KG', packSize:21, price:sar(455), baseRatePerM2:0.5, scales:true },
+      { name:['إيبوكسي أرضيات SF 120 (الطبقة النهائية)', 'Epoxy Coating SF 120 (top coat)'], unit:'KG', packSize:21, price:sar(455), sp:sar(500), baseRatePerM2:0.5, scales:true },
       THINNER
     ]
   },
@@ -498,7 +498,7 @@ const SYSTEMS = [
     stdColor: GREY, putty: true,
     components: [
       SF101,
-      { name:['بي يو فليكس 200 (الطبقة النهائية)', 'PU-Flex 200 (top coat)'], unit:'KG', packSize:18, price:sar(480), baseRatePerM2:0.5, scales:true },
+      { name:['بي يو فليكس 200 (الطبقة النهائية)', 'PU-Flex 200 (top coat)'], unit:'KG', packSize:18, price:sar(480), sp:sar(480), baseRatePerM2:0.5, scales:true },
       THINNER
     ]
   },
@@ -511,7 +511,7 @@ const SYSTEMS = [
     stdColor: GREY, putty: true,
     components: [
       SF101,
-      { name:['إيبوكسي سيلف ليفل 90 SL', 'Epoxy Self Leveling SL 90'], unit:'KG', packSize:18, price:sar(470), baseRatePerM2:1.5, scales:true }
+      { name:['إيبوكسي سيلف ليفل 90 SL', 'Epoxy Self Leveling SL 90'], unit:'KG', packSize:18, price:sar(470), sp:sar(520), baseRatePerM2:1.5, scales:true }
     ]
   },
   {
@@ -536,7 +536,7 @@ const SYSTEMS = [
     stdColor: GREY, putty: true,
     components: [
       { name:['أساس البولي يوريثان (طبقة الأساس)', 'PU Primer (primer coat)'], unit:'KG', packSize:18, price:sar(1080), baseRatePerM2:0.25, scales:false },
-      { name:['دهان البولي يوريثان (الطبقة النهائية)', 'PU Coating (top coat)'], unit:'KG', packSize:18, price:sar(1080), baseRatePerM2:0.5, scales:true },
+      { name:['دهان البولي يوريثان (الطبقة النهائية)', 'PU Coating (top coat)'], unit:'KG', packSize:18, price:sar(1080), sp:sar(1080), baseRatePerM2:0.5, scales:true },
       THINNER
     ]
   },
@@ -623,7 +623,7 @@ const SYSTEMS = [
     adjustable: null,
     stdColor: null, putty: false,
     components: [
-      { name:['أساس البولي يوريثان ملون', 'PU Primer - Special Color'], unit:'KG', packSize:18, price:sar(900), baseRatePerM2:0.25, scales:false },
+      { name:['أساس البولي يوريثان ملون', 'PU Primer - Special Color'], unit:'KG', packSize:18, price:sar(1080), baseRatePerM2:0.25, scales:false },
       { name:['معجون PU', 'PU Putty'], unit:'KG', packSize:13, price:sar(400), baseRatePerM2:1, scales:false },
       { name:['البولي يوريثان بوند ستون', 'PU Bond Stone'], unit:'KG', packSize:15, price:sar(1200), baseRatePerM2:1.6, scales:false },
       { name:['سيليكا', 'Silica'], unit:'KG', packSize:25, price:null, baseRatePerM2:8, scales:false },
@@ -691,39 +691,59 @@ function indexHref(){
 }
 
 const SYS = resolveSystem();
+const Q = new URLSearchParams(location.search);
+
+// Orders go to the Projects WhatsApp number (Coexistence: staff answer on the Business app).
+const WA_NUMBER = '966580107729';
+const VAT = 0.15;
 
 // ---------- DOM ----------
-const areaInput = document.getElementById('areaInput');
-const adjustableWrap = document.getElementById('adjustableWrap');
-const colorSelect = document.getElementById('colorSelect');
-const usdToggle = document.getElementById('usdToggle');
-const resultsBody = document.getElementById('resultsBody');
-const totalDrums = document.getElementById('totalDrums');
-const totalWeight = document.getElementById('totalWeight');
-const totalCost = document.getElementById('totalCost');
-const totalCostLbl = document.getElementById('totalCostLbl');
-const usdBlock = document.getElementById('usdBlock');
-const notesList = document.getElementById('notesList');
-const langBtn = document.getElementById('langBtn');
-let adjValue = SYS && SYS.adjustable ? SYS.adjustable.default : null;
+const $ = id => document.getElementById(id);
+const areaInput = $('areaInput');
+const adjustableWrap = $('adjustableWrap');
+const colorSelect = $('colorSelect');
+const usdToggle = $('usdToggle');
+const cityInput = $('cityInput');
+const resultsBody = $('resultsBody');
+const notesList = $('notesList');
+const langBtn = $('langBtn');
+
+// A shared link (?area=..&n=..&color=special) restores the calculation.
+let adjValue = null;
+if (SYS){
+  const adj = SYS.adjustable;
+  if (adj){
+    const n = parseFloat(Q.get('n'));
+    adjValue = n >= adj.min && n <= adj.max ? Math.round(n / adj.step) * adj.step : adj.default;
+  }
+  const a = parseFloat(Q.get('area'));
+  if (a > 0) areaInput.value = a;
+  if (SYS.stdColor && Q.get('color') === 'special') colorSelect.value = 'special';
+}
+let last = null;   // result of the latest calculate(), used for the order message
 
 function fmt(n, decimals){
   if (decimals===undefined) decimals = 2;
   return Number(n).toLocaleString('en-US', {minimumFractionDigits:decimals, maximumFractionDigits:decimals});
 }
 
-// Source price list is in USD; SAR is the primary displayed currency (converted at a fixed rate),
-// with USD shown as an optional secondary figure when usdToggle is checked.
+// Prices are kept in USD internally (sar() above); SAR is the displayed currency,
+// with USD as an optional secondary figure when usdToggle is checked.
 const EXCHANGE_RATE = 3.75; // SAR per 1 USD
+const sarAmount = usd => `${fmt(usd*EXCHANGE_RATE,2)} ${T().cur}`;
 function sarText(usdValue){
-  let out = `<span class="nw">${fmt(usdValue*EXCHANGE_RATE,2)} ${T().cur}</span>`;
+  let out = `<span class="nw">${sarAmount(usdValue)}</span>`;
   if (usdToggle.checked) out += ` <span class="hint nw" style="display:inline;">(<bdi dir="ltr">$${fmt(usdValue,2)}</bdi>)</span>`;
   return out;
 }
+const isSpecial = () => !!(SYS && SYS.stdColor && colorSelect.value === 'special');
+const hasSpecialPrices = () => SYS.components.some(c => c.sp != null);
+const priceOf = c => isSpecial() && c.sp != null ? c.sp : c.price;
 // Number first, then unit (e.g. "17.33 ر.س/كجم" / "17.33 SAR/kg")
 function unitPriceText(c){
-  if (c.price == null) return T().onRequest;
-  const usdPerUnit = c.price / c.packSize;
+  const price = priceOf(c);
+  if (price == null) return T().onRequest;
+  const usdPerUnit = price / c.packSize;
   const u = T().unit[c.unit];
   let out = `<span class="nw">${fmt(usdPerUnit*EXCHANGE_RATE,2)} ${T().cur}/${u}</span>`;
   if (usdToggle.checked) out += ` <span class="hint nw" style="display:inline;">(<bdi dir="ltr">$${fmt(usdPerUnit,2)}</bdi>/${u})</span>`;
@@ -740,27 +760,27 @@ function applyLang(){
 }
 
 function renderIndex(){
-  document.getElementById('systemsIndex').style.display = 'block';
-  document.getElementById('systemsList').innerHTML =
+  $('systemsIndex').style.display = 'block';
+  $('systemsList').innerHTML =
     SYSTEMS.map(s=>`<a class="sys-link" href="${systemHref(s.id)}">${tr(s.name)}</a>`).join('');
   if (IS_WEB) { try { history.replaceState(null, '', indexHref()); } catch(e){} }
 }
 
 function renderSystem(){
   const sys = SYS;
-  document.getElementById('calcView').style.display = 'block';
-  document.getElementById('systemName').textContent = tr(sys.name);
-  document.getElementById('systemDesc').textContent = tr(sys.desc);
-  document.getElementById('allSystemsLink').href = indexHref();
-
-  // keep the clean link (/calculator/sb110/) in the address bar
-  if (IS_WEB) { try { history.replaceState(null, '', systemHref(sys.id)); } catch(e){} }
+  $('calcView').style.display = 'block';
+  $('stickyBar').classList.add('on');
+  document.body.classList.add('has-bar');
+  $('systemName').textContent = tr(sys.name);
+  $('systemDesc').textContent = tr(sys.desc);
+  $('allSystemsLink').href = indexHref();
+  $('areaSuffix').textContent = T().m2;
 
   if (sys.stdColor){
-    document.getElementById('stdColorOption').textContent = T().stdColor(tr(sys.stdColor));
-    document.getElementById('specialColorOption').textContent = T().specialColor;
+    $('stdColorOption').textContent = T().stdColor(tr(sys.stdColor));
+    $('specialColorOption').textContent = hasSpecialPrices() ? T().specialPriced : T().specialColor;
   } else {
-    document.getElementById('colorField').style.display = 'none';
+    $('colorField').style.display = 'none';
   }
 
   const adj = sys.adjustable;
@@ -774,8 +794,8 @@ function renderSystem(){
     </div>
     <div class="hint">${T().recommended(adj.default, unit)}</div>
   `;
-  const range = document.getElementById('adjustableRange');
-  const val = document.getElementById('adjustableVal');
+  const range = $('adjustableRange');
+  const val = $('adjustableVal');
   range.addEventListener('input', ()=>{
     adjValue = parseFloat(range.value);
     val.textContent = `${range.value} ${unit}`;
@@ -785,7 +805,6 @@ function renderSystem(){
 
 function renderNotes(hasUnpriced){
   const sys = SYS;
-  const special = sys.stdColor && colorSelect.value==='special';
   const items = [];
   if (sys.stdColor) items.push(T().colorNote(tr(sys.stdColor)));
   items.push(T().exFactory);
@@ -793,7 +812,7 @@ function renderNotes(hasUnpriced){
   (sys.notes || []).forEach(n=>items.push(tr(n)));
   items.push(T().drumsRounded);
   if (hasUnpriced) items.push(T().unpriced);
-  if (special) items.push(T().specialChosen);
+  if (isSpecial()) items.push(hasSpecialPrices() ? T().specialPricedNote : T().specialChosen);
   notesList.innerHTML = items.map(t=>`<li>${t}</li>`).join('');
 }
 
@@ -803,11 +822,11 @@ function calculate(){
   const adj = sys.adjustable;
   const ratio = adj ? adjValue / adj.default : 1;
   const U = T().unit;
+  const H = T();
 
   let rows = '';
-  let sumDrums = 0;
-  let sumWeightKG = 0, sumVolumeL = 0;
-  let sumCost = 0;
+  const lines = [];
+  let sumDrums = 0, sumWeightKG = 0, sumVolumeL = 0, sumCost = 0;
   let priced = 0, unpriced = 0;
 
   sys.components.forEach(c=>{
@@ -815,48 +834,113 @@ function calculate(){
     const exactQty = ratePerM2 * area;
     // tiny epsilon so float noise (e.g. 0.15*120 = 18.000000000000004) never adds a drum
     const drumsNeeded = area>0 ? Math.max(0, Math.ceil(exactQty / c.packSize - 1e-9)) : 0;
-    const hasPrice = c.price != null;
-    const purchaseCost = hasPrice ? drumsNeeded * c.price : 0;
+    const price = priceOf(c);
+    const hasPrice = price != null;
+    const purchaseCost = hasPrice ? drumsNeeded * price : 0;
     if (hasPrice) priced++; else unpriced++;
 
     sumDrums += drumsNeeded;
     if (c.unit === 'L') sumVolumeL += drumsNeeded*c.packSize; else sumWeightKG += drumsNeeded*c.packSize;
     sumCost += purchaseCost;
+    lines.push({ c, drums: drumsNeeded });
 
     rows += `<tr>
-      <td>${tr(c.name)}</td>
-      <td class="nw">${fmt(ratePerM2,3)} ${U[c.unit]}/${T().m2}</td>
-      <td class="nw">${fmt(exactQty,1)} ${U[c.unit]}</td>
-      <td><span class="nw">${c.packSize} ${U[c.unit]}</span> — ${unitPriceText(c)}</td>
-      <td><strong>${drumsNeeded}</strong></td>
-      <td>${hasPrice ? sarText(purchaseCost) : T().onRequest}</td>
+      <td class="name">${tr(c.name)}</td>
+      <td class="nw" data-label="${H.thRate}">${fmt(ratePerM2,3)} ${U[c.unit]}/${H.m2}</td>
+      <td class="nw" data-label="${H.thQty}">${fmt(exactQty,1)} ${U[c.unit]}</td>
+      <td data-label="${H.thPack}"><span><span class="nw">${c.packSize} ${U[c.unit]}</span> — ${unitPriceText(c)}</span></td>
+      <td class="drums" data-label="${H.thDrums}"><strong>${drumsNeeded}</strong></td>
+      <td data-label="${H.thCost}">${hasPrice ? sarText(purchaseCost) : H.onRequest}</td>
     </tr>`;
   });
 
   resultsBody.innerHTML = rows;
 
-  totalDrums.textContent = sumDrums;
+  $('totalDrums').textContent = sumDrums;
   const weightParts = [];
   if (sumWeightKG>0) weightParts.push(`${fmt(sumWeightKG,0)} ${U.KG}`);
   if (sumVolumeL>0) weightParts.push(`${fmt(sumVolumeL,0)} ${U.L}`);
-  totalWeight.textContent = weightParts.join(' + ') || '0';
+  $('totalWeight').textContent = weightParts.join(' + ') || '0';
 
-  if (priced === 0){
-    totalCost.textContent = T().onRequest;
-    totalCostLbl.textContent = T().totalCost;
-  } else {
-    totalCost.textContent = `${fmt(sumCost*EXCHANGE_RATE,2)} ${T().cur}`;
-    totalCostLbl.textContent = unpriced ? T().totalCostPartial : T().totalCost;
-  }
+  const total = sumCost * (1 + VAT);
+  $('bill').style.display = priced ? '' : 'none';
+  $('subtotalLbl').textContent = unpriced ? H.subtotalPartial : H.subtotal;
+  $('subtotal').textContent = sarAmount(sumCost);
+  $('vatAmount').textContent = sarAmount(sumCost * VAT);
+  $('totalCost').textContent = sarAmount(total);
+  $('sbTotal').textContent = priced ? sarAmount(total) : H.onRequest;
 
+  const usdBlock = $('usdBlock');
   if (usdToggle.checked && priced>0){
     usdBlock.style.display = 'block';
-    usdBlock.innerHTML = T().usdLine(fmt(sumCost,2), fmt(EXCHANGE_RATE,2));
+    usdBlock.innerHTML = H.usdLine(fmt(sumCost,2), fmt(EXCHANGE_RATE,2));
   } else {
     usdBlock.style.display = 'none';
   }
 
   renderNotes(unpriced>0);
+  last = { area, lines, priced, unpriced, total };
+  updateOrder();
+}
+
+// ---------- ORDER (WhatsApp link + QR) ----------
+// The link that reopens this exact calculation; also kept in the address bar.
+function calcQuery(){
+  const p = new URLSearchParams();
+  if (LANG === 'en') p.set('lang', 'en');
+  p.set('area', String(last.area));
+  if (SYS.adjustable) p.set('n', String(adjValue));
+  if (isSpecial()) p.set('color', 'special');
+  return p.toString();
+}
+const calcLink = () => IS_WEB ? `${location.origin}${BASE_PATH}${SYS.id}/?${calcQuery()}` : '';
+
+function orderLines(full){
+  const H = T(), sys = SYS, adj = sys.adjustable;
+  const area = `${fmt(last.area,0)} ${H.m2}`;
+  const out = full
+    ? [H.msgHead, '', `${H.msgSystem}: ${tr(sys.name)}`, `${H.msgArea}: ${area}`]
+    : [H.msgHeadShort, tr(sys.name), area + (adj ? ` — ${adjValue} ${tr(adj.unit)}` : '')];
+  if (full && adj) out.push(`${tr(adj.label)}: ${adjValue} ${tr(adj.unit)}`);
+  if (sys.stdColor) out.push(`${H.msgColor}: ${isSpecial() ? H.msgSpecial : tr(sys.stdColor)}`);
+  const city = cityInput.value.trim();
+  if (city) out.push(`${H.msgCity}: ${city}`);
+  if (full){
+    out.push('', `${H.msgMaterials}:`);
+    last.lines.filter(l=>l.drums>0).forEach(l=>
+      out.push(`• ${tr(l.c.name)}: ${H.msgPack(l.drums, l.c.packSize, H.unit[l.c.unit])}`));
+    if (last.priced) out.push('', `${H.grandTotal}: ${sarAmount(last.total)}${last.unpriced ? ' + ' + H.onRequest : ''}`);
+  }
+  const link = full && calcLink();
+  if (link) out.push('', `${H.msgLink}: ${link}`);
+  return out.join('\n');
+}
+const waUrl = text => `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(text)}`;
+
+let qr = null;
+function updateOrder(){
+  if (IS_WEB) { try { history.replaceState(null, '', `${BASE_PATH}${SYS.id}/?${calcQuery()}`); } catch(e){} }
+  const ok = last.area > 0;
+  const href = waUrl(orderLines(true));
+  ['waBtn','sbWaBtn'].forEach(id=>{
+    const a = $(id);
+    if (ok) { a.href = href; a.removeAttribute('aria-disabled'); }
+    else { a.removeAttribute('href'); a.setAttribute('aria-disabled', 'true'); }
+  });
+
+  // The QR is for desktop visitors: phones just tap the button. Arabic costs 6 bytes per
+  // letter once URL-encoded, so the QR carries only system/area/colour to stay scannable.
+  const box = $('qrBox');
+  const show = ok && typeof QRCode !== 'undefined' && matchMedia('(min-width:960px)').matches;
+  box.classList.toggle('on', show);
+  $('orderGrid').classList.toggle('has-qr', show);
+  if (!show) return;
+  const text = waUrl(orderLines(false));
+  try {
+    if (!qr) qr = new QRCode($('qr'), { text, width:200, height:200, correctLevel: QRCode.CorrectLevel.L });
+    else qr.makeCode(text);
+    $('qr').title = '';   // qrcodejs puts the whole URL in a tooltip
+  } catch(e){ box.classList.remove('on'); $('orderGrid').classList.remove('has-qr'); }
 }
 
 function render(){
@@ -875,6 +959,8 @@ if (SYS){
   areaInput.addEventListener('input', calculate);
   colorSelect.addEventListener('change', calculate);
   usdToggle.addEventListener('change', calculate);
+  cityInput.addEventListener('input', updateOrder);
+  matchMedia('(min-width:960px)').addEventListener('change', updateOrder);
 }
 render();
 </script>
