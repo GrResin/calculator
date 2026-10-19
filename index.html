@@ -124,6 +124,19 @@ if (location.hostname.endsWith('github.io'))
   .area-row{position:relative;}
   .area-row input{padding-inline-end:48px;font-size:1.15rem;font-weight:700;}
   .area-row .suffix{position:absolute;inset-inline-end:14px;top:50%;transform:translateY(-50%);color:var(--mute);font-weight:600;pointer-events:none;}
+  /* colour picker: two pill buttons (radio inputs) */
+  .seg{border:0;margin:0;padding:0;min-width:0;}
+  .seg legend{padding:0;font-size:.86rem;color:var(--mute);margin-bottom:6px;font-weight:600;}
+  .seg-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .seg-opts label{margin:0;cursor:pointer;}
+  .seg-opts input{position:absolute;opacity:0;pointer-events:none;}
+  .seg-opts span{
+    display:block;text-align:center;padding:10px 8px;border:1.5px solid var(--border);border-radius:10px;
+    background:#fff;color:var(--text);font-weight:600;font-size:.95rem;
+  }
+  .seg-opts label:hover span{border-color:var(--brand-2);}
+  .seg-opts input:checked + span{background:var(--brand);border-color:var(--brand);color:#fff;}
+  .seg-opts input:focus-visible + span{box-shadow:0 0 0 3px rgba(167,21,127,.25);}
   .hint{font-size:.78rem;color:var(--mute);margin-top:6px;}
   .layer-slider-row{display:flex;align-items:center;gap:10px;}
   input[type=range]{flex:1;accent-color:var(--brand-2);height:28px;}
@@ -252,13 +265,13 @@ if (location.hostname.endsWith('github.io'))
 
       <div id="adjustableWrap" class="field"></div>
 
-      <div class="field" id="colorField">
-        <label for="colorSelect" data-i18n="color"></label>
-        <select id="colorSelect">
-          <option value="standard" id="stdColorOption"></option>
-          <option value="special" id="specialColorOption"></option>
-        </select>
-      </div>
+      <fieldset class="field seg" id="colorField">
+        <legend data-i18n="color"></legend>
+        <div class="seg-opts">
+          <label><input type="radio" name="color" value="standard" checked><span id="stdColorOption"></span></label>
+          <label><input type="radio" name="color" value="special"><span id="specialColorOption"></span></label>
+        </div>
+      </fieldset>
 
       <div class="toggle-row">
         <input type="checkbox" id="usdToggle">
@@ -364,8 +377,8 @@ const UI = {
     allSystems:'عرض كل الأنظمة',
     footer:'حاسبة تقديرية للأغراض الاسترشادية — بناءً على معدلات استهلاك وأسعار Graffiti Resin. يُنصح بمراجعة العرض الفني النهائي قبل الشراء.',
     onRequest:'يُحدد عند الطلب',
-    stdColor:c=>`اللون القياسي (${c}) — بدون تكلفة إضافية`,
-    specialColor:'لون خاص — تُضاف تكلفة تلوين إضافية (تُحدد عند الطلب، غير محسوبة هنا)',
+    stdColor:c=>`لون ${c}`,
+    specialColor:'لون خاص',
     recommended:(v,u)=>`القيمة القياسية الموصى بها: ${v} ${u}`,
     usdLine:(usd,rate)=>`≈ <bdi dir="ltr">$${usd}</bdi> أمريكي (بسعر صرف تقديري <bdi dir="ltr">${rate}</bdi> ريال لكل دولار)`,
     colorNote:c=>`الأسعار مخصصة للون ${c}، وتُطبق تكلفة تلوين إضافية عند طلب الألوان الخاصة.`,
@@ -374,7 +387,6 @@ const UI = {
     drumsRounded:'عدد البراميل مقرَّب لأعلى لأقرب عبوة كاملة، لأن الشراء يكون بعبوات كاملة فقط.',
     unpriced:'بعض المواد أعلاه غير مسعّرة حالياً — يُحدد سعرها عند الطلب، وهي غير مدرجة في إجمالي التكلفة.',
     specialChosen:'تم اختيار لون خاص: المواد المتوفر لها سعر لون خاص محسوبة به، أما تلوين الطبقة النهائية فتكلفته تُحدد عند الطلب وغير مدرجة أعلاه.',
-    specialPriced:'لون خاص — محسوب بسعر عبوات اللون الخاص',
     specialPricedNote:'تم احتساب الأساس والطبقة النهائية بأسعار عبوات اللون الخاص من قائمة الأسعار.',
     subtotal:'إجمالي المواد (غير شامل الضريبة)', subtotalPartial:'إجمالي المواد المسعّرة (غير شامل الضريبة)',
     vat:'ضريبة القيمة المضافة 15%', grandTotal:'الإجمالي شامل الضريبة',
@@ -407,8 +419,8 @@ const UI = {
     allSystems:'View all systems',
     footer:'Estimate for guidance only — based on Graffiti Resin consumption rates and prices. Please review the final technical offer before purchasing.',
     onRequest:'On request',
-    stdColor:c=>`Standard colour (${c}) — no extra cost`,
-    specialColor:'Special colour — extra tinting cost applies (quoted on order, not included here)',
+    stdColor:c=>c[0].toUpperCase() + c.slice(1),
+    specialColor:'Special colour',
     recommended:(v,u)=>`Recommended standard value: ${v} ${u}`,
     usdLine:(usd,rate)=>`≈ $${usd} USD (at an estimated rate of ${rate} SAR per USD)`,
     colorNote:c=>`Prices are for ${c}; an extra tinting cost applies for special colours.`,
@@ -417,7 +429,6 @@ const UI = {
     drumsRounded:'Drum counts are rounded up to the nearest full pack, since materials are sold in full packs only.',
     unpriced:'Some materials above are not priced yet — their price is quoted on request and they are not included in the total cost.',
     specialChosen:'Special colour selected: materials with a special-colour price use it; tinting the top coat is quoted on order and not included above.',
-    specialPriced:'Special colour — priced at the special-colour pack price',
     specialPricedNote:'The primer and top coat are priced at the special-colour pack prices from the price list.',
     subtotal:'Materials subtotal (excl. VAT)', subtotalPartial:'Priced materials subtotal (excl. VAT)',
     vat:'VAT 15%', grandTotal:'Total incl. VAT',
@@ -710,7 +721,8 @@ const VAT = 0.15;
 const $ = id => document.getElementById(id);
 const areaInput = $('areaInput');
 const adjustableWrap = $('adjustableWrap');
-const colorSelect = $('colorSelect');
+const colorField = $('colorField');
+const colorValue = () => colorField.querySelector('input:checked').value;
 const usdToggle = $('usdToggle');
 const cityInput = $('cityInput');
 const resultsBody = $('resultsBody');
@@ -727,7 +739,7 @@ if (SYS){
   }
   const a = parseFloat(Q.get('area'));
   if (a > 0) areaInput.value = a;
-  if (SYS.stdColor && Q.get('color') === 'special') colorSelect.value = 'special';
+  if (SYS.stdColor && Q.get('color') === 'special') colorField.querySelector('input[value=special]').checked = true;
 }
 let last = null;   // result of the latest calculate(), used for the order message
 
@@ -745,7 +757,7 @@ function sarText(usdValue){
   if (usdToggle.checked) out += ` <span class="hint nw" style="display:inline;">(<bdi dir="ltr">$${fmt(usdValue,2)}</bdi>)</span>`;
   return out;
 }
-const isSpecial = () => !!(SYS && SYS.stdColor && colorSelect.value === 'special');
+const isSpecial = () => !!(SYS && SYS.stdColor && colorValue() === 'special');
 const tintOnRequest = () => SYS.components.some(c => c.tint);
 const priceOf = c => isSpecial() && c.sp != null ? c.sp : c.price;
 // Pack price on top ("405.00 ر.س"), pack size and price per kg/L under it.
@@ -786,8 +798,8 @@ function renderSystem(){
   $('areaSuffix').textContent = T().m2;
 
   if (sys.stdColor){
-    $('stdColorOption').textContent = T().stdColor(tr(sys.stdColor));
-    $('specialColorOption').textContent = tintOnRequest() ? T().specialColor : T().specialPriced;
+    $('stdColorOption').textContent = T().stdColor(tr(sys.stdColor).split(' ')[0]);   // "رمادي RAL 7040" -> "لون رمادي"
+    $('specialColorOption').textContent = T().specialColor;
   } else {
     $('colorField').style.display = 'none';
   }
@@ -966,7 +978,7 @@ langBtn.addEventListener('click', ()=>{
 // init
 if (SYS){
   areaInput.addEventListener('input', calculate);
-  colorSelect.addEventListener('change', calculate);
+  colorField.addEventListener('change', calculate);
   usdToggle.addEventListener('change', calculate);
   cityInput.addEventListener('input', updateOrder);
   matchMedia('(min-width:960px)').addEventListener('change', updateOrder);
