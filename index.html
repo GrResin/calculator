@@ -358,7 +358,7 @@ const UI = {
     usdToggle:'إظهار التكلفة بالدولار الأمريكي أيضاً (اختياري)',
     materials:'تفاصيل المواد المطلوبة',
     thMaterial:'المادة', thRate:'الاستهلاك / م²', thQty:'الكمية الفعلية المطلوبة',
-    thPack:'حجم العبوة / سعر الوحدة', thDrums:'عدد البراميل (شراء)', thCost:'التكلفة التقديرية',
+    thPack:'سعر العبوة', pack:'عبوة', thDrums:'عدد البراميل (شراء)', thCost:'التكلفة التقديرية',
     totalDrums:'إجمالي عدد البراميل/العبوات', totalWeight:'إجمالي وزن/حجم المواد',
     notesTitle:'ملاحظات هامة:',
     allSystems:'عرض كل الأنظمة',
@@ -401,7 +401,7 @@ const UI = {
     usdToggle:'Also show the cost in US dollars (optional)',
     materials:'Required materials',
     thMaterial:'Material', thRate:'Consumption / m²', thQty:'Required quantity',
-    thPack:'Pack size / unit price', thDrums:'Drums to buy', thCost:'Estimated cost',
+    thPack:'Pack price', pack:'pack', thDrums:'Drums to buy', thCost:'Estimated cost',
     totalDrums:'Total drums / packs', totalWeight:'Total material weight / volume',
     notesTitle:'Important notes:',
     allSystems:'View all systems',
@@ -748,15 +748,15 @@ function sarText(usdValue){
 const isSpecial = () => !!(SYS && SYS.stdColor && colorSelect.value === 'special');
 const tintOnRequest = () => SYS.components.some(c => c.tint);
 const priceOf = c => isSpecial() && c.sp != null ? c.sp : c.price;
-// Number first, then unit (e.g. "17.33 ر.س/كجم" / "17.33 SAR/kg")
-function unitPriceText(c){
+// Pack price on top ("405.00 ر.س"), pack size and price per kg/L under it.
+function packPriceText(c){
   const price = priceOf(c);
-  if (price == null) return T().onRequest;
-  const usdPerUnit = price / c.packSize;
   const u = T().unit[c.unit];
-  let out = `<span class="nw">${fmt(usdPerUnit*EXCHANGE_RATE,2)} ${T().cur}/${u}</span>`;
-  if (usdToggle.checked) out += ` <span class="hint nw" style="display:inline;">(<bdi dir="ltr">$${fmt(usdPerUnit,2)}</bdi>/${u})</span>`;
-  return out;
+  const size = LANG === 'en' ? `${c.packSize} ${u} ${T().pack}` : `${T().pack} ${c.packSize} ${u}`;
+  if (price == null) return `${T().onRequest}<div class="hint nw" style="margin:2px 0 0;">${size}</div>`;
+  let out = `<strong class="nw">${sarAmount(price)}</strong>`;
+  if (usdToggle.checked) out += ` <span class="hint nw" style="display:inline;">(<bdi dir="ltr">$${fmt(price,2)}</bdi>)</span>`;
+  return out + `<div class="hint nw" style="margin:2px 0 0;">${size} · ${fmt(price/c.packSize*EXCHANGE_RATE,2)} ${T().cur}/${u}</div>`;
 }
 
 function applyLang(){
@@ -857,7 +857,7 @@ function calculate(){
       <td class="name">${tr(c.name)}</td>
       <td class="nw" data-label="${H.thRate}">${fmt(ratePerM2,3)} ${U[c.unit]}/${H.m2}</td>
       <td class="nw" data-label="${H.thQty}">${fmt(exactQty,1)} ${U[c.unit]}</td>
-      <td data-label="${H.thPack}"><span><span class="nw">${c.packSize} ${U[c.unit]}</span> — ${unitPriceText(c)}</span></td>
+      <td data-label="${H.thPack}"><span>${packPriceText(c)}</span></td>
       <td class="drums" data-label="${H.thDrums}"><strong>${drumsNeeded}</strong></td>
       <td data-label="${H.thCost}">${hasPrice ? sarText(purchaseCost) : H.onRequest}</td>
     </tr>`;
