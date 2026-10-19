@@ -192,6 +192,14 @@ if (location.hostname.endsWith('github.io'))
   .wa-btn[aria-disabled=true]{opacity:.5;pointer-events:none;}
   .qr-box{display:none;text-align:center;}
   @media (min-width:960px){ .qr-box.on{display:block;} }
+  body.embedded .qr-box.on{display:block;}
+  /* inside a kiosk (Labeib iframe) the order button opens this QR instead of WhatsApp */
+  #qrDialog{border:0;border-radius:16px;padding:24px;max-width:340px;width:calc(100% - 32px);text-align:center;color:var(--text);}
+  #qrDialog::backdrop{background:rgba(30,10,25,.6);}
+  #qrDialog h3{margin:0 0 6px;color:var(--brand);font-size:1.1rem;}
+  #qrBig{display:inline-block;background:#fff;padding:12px;border:1px solid var(--border);border-radius:12px;margin:12px 0;}
+  #qrBig img, #qrBig canvas{display:block;width:260px;height:260px;max-width:100%;}
+  #qrDialog .close-btn{display:block;width:100%;margin-top:8px;padding:11px;border:1.5px solid var(--border);border-radius:10px;background:#fff;font:inherit;font-weight:600;cursor:pointer;}
   #qr{background:#fff;padding:10px;border:1px solid var(--border);border-radius:12px;display:inline-block;}
   #qr img, #qr canvas{display:block;width:200px;height:200px;}
   .qr-box .hint{max-width:200px;margin-inline:auto;}
@@ -350,6 +358,13 @@ if (location.hostname.endsWith('github.io'))
 
 </div>
 
+<dialog id="qrDialog">
+  <h3 data-i18n="qrTitle"></h3>
+  <p class="hint" style="margin:0;font-size:.9rem;" data-i18n="qrDialogHint"></p>
+  <div id="qrBig"></div>
+  <button type="button" class="close-btn" id="qrClose" data-i18n="close"></button>
+</dialog>
+
 <div class="sticky-bar" id="stickyBar">
   <div class="sb-total"><span class="lbl" data-i18n="grandTotal"></span><span class="num" id="sbTotal"></span></div>
   <a class="wa-btn" id="sbWaBtn" target="_blank" rel="noopener"><span data-i18n="orderBtnShort"></span></a>
@@ -396,6 +411,7 @@ const UI = {
     orderBtn:'إرسال الطلب على واتساب', orderBtnShort:'اطلب الآن',
     orderAfter:'سيفتح واتساب برسالة جاهزة فيها النظام والمساحة والكميات — اضغط إرسال فقط.',
     qrHint:'أو امسح الكود بجوالك لإرسال الطلب',
+    qrTitle:'امسح الكود بجوالك', qrDialogHint:'سيفتح واتساب على جوالك برسالة الطلب جاهزة — اضغط إرسال فقط.', close:'إغلاق',
     msgHead:'مرحباً، أرغب بطلب مواد حسب حاسبة جرافيتي:', msgHeadShort:'طلب مواد من الحاسبة:',
     msgSystem:'النظام', msgArea:'المساحة', msgColor:'اللون', msgCity:'المدينة', msgMaterials:'المواد المطلوبة',
     msgSpecial:'لون خاص', msgLink:'رابط الحساب',
@@ -438,6 +454,7 @@ const UI = {
     orderBtn:'Send order on WhatsApp', orderBtnShort:'Order now',
     orderAfter:'WhatsApp opens with a ready message listing the system, area and quantities — just tap send.',
     qrHint:'Or scan the code with your phone to send the order',
+    qrTitle:'Scan with your phone', qrDialogHint:'WhatsApp opens on your phone with the order message ready — just tap send.', close:'Close',
     msgHead:'Hello, I would like to order materials from the Graffiti calculator:', msgHeadShort:'Material order from the calculator:',
     msgSystem:'System', msgArea:'Area', msgColor:'Colour', msgCity:'City', msgMaterials:'Materials',
     msgSpecial:'Special colour', msgLink:'Calculation link',
@@ -699,6 +716,9 @@ function resolveSystem(){
   return SYSTEMS.find(s=>s.id===key) || SYSTEMS.find(s=>s.id===ALIASES[key]) || null;
 }
 const IS_WEB = location.protocol === 'http:' || location.protocol === 'https:';
+// Shown inside another site (the Labeib kiosk's iframe): WhatsApp refuses to load in a frame and a
+// kiosk has no WhatsApp anyway, so the order goes through a QR the customer scans with their phone.
+const EMBEDDED = (() => { try { return window.self !== window.top; } catch(e){ return true; } })();
 const BASE_PATH = location.pathname.replace(/[^/]*$/,'');   // e.g. /calculator/
 const langQ = () => LANG === 'en' ? 'lang=en' : '';
 function systemHref(id){
@@ -952,7 +972,7 @@ function updateOrder(){
   // The QR is for desktop visitors: phones just tap the button. Arabic costs 6 bytes per
   // letter once URL-encoded, so the QR carries only system/area/colour to stay scannable.
   const box = $('qrBox');
-  const show = ok && typeof QRCode !== 'undefined' && matchMedia('(min-width:960px)').matches;
+  const show = ok && typeof QRCode !== 'undefined' && (EMBEDDED || matchMedia('(min-width:960px)').matches);
   box.classList.toggle('on', show);
   $('orderGrid').classList.toggle('has-qr', show);
   if (!show) return;
@@ -962,6 +982,16 @@ function updateOrder(){
     else qr.makeCode(text);
     $('qr').title = '';   // qrcodejs puts the whole URL in a tooltip
   } catch(e){ box.classList.remove('on'); $('orderGrid').classList.remove('has-qr'); }
+}
+
+function openQrDialog(e){
+  if (!EMBEDDED || typeof QRCode === 'undefined') return;   // normal pages: the link opens WhatsApp
+  e.preventDefault();
+  if (!(last && last.area > 0)) return;
+  $('qrBig').innerHTML = '';
+  new QRCode($('qrBig'), { text: waUrl(orderLines(false)), width:260, height:260, correctLevel: QRCode.CorrectLevel.L });
+  $('qrBig').title = '';
+  $('qrDialog').showModal();
 }
 
 function render(){
@@ -981,6 +1011,9 @@ if (SYS){
   colorField.addEventListener('change', calculate);
   usdToggle.addEventListener('change', calculate);
   cityInput.addEventListener('input', updateOrder);
+  if (EMBEDDED) document.body.classList.add('embedded');
+  ['waBtn','sbWaBtn'].forEach(id => $(id).addEventListener('click', openQrDialog));
+  $('qrClose').addEventListener('click', () => $('qrDialog').close());
   matchMedia('(min-width:960px)').addEventListener('change', updateOrder);
 }
 render();
