@@ -373,9 +373,9 @@ const UI = {
     putty:'لا تشمل التكلفة معجون الإيبوكسي المستخدم في معالجة السطح، حيث يُحدد الاحتياج إليه حسب حالة الأرضية والتقييم الفني.',
     drumsRounded:'عدد البراميل مقرَّب لأعلى لأقرب عبوة كاملة، لأن الشراء يكون بعبوات كاملة فقط.',
     unpriced:'بعض المواد أعلاه غير مسعّرة حالياً — يُحدد سعرها عند الطلب، وهي غير مدرجة في إجمالي التكلفة.',
-    specialChosen:'تم اختيار لون خاص: ستُضاف تكلفة تلوين إضافية يتم تحديدها عند الطلب — غير مدرجة في الحساب أعلاه.',
+    specialChosen:'تم اختيار لون خاص: المواد المتوفر لها سعر لون خاص محسوبة به، أما تلوين الطبقة النهائية فتكلفته تُحدد عند الطلب وغير مدرجة أعلاه.',
     specialPriced:'لون خاص — محسوب بسعر عبوات اللون الخاص',
-    specialPricedNote:'تم احتساب الطبقة النهائية بسعر عبوات اللون الخاص من قائمة الأسعار.',
+    specialPricedNote:'تم احتساب الأساس والطبقة النهائية بأسعار عبوات اللون الخاص من قائمة الأسعار.',
     subtotal:'إجمالي المواد (غير شامل الضريبة)', subtotalPartial:'إجمالي المواد المسعّرة (غير شامل الضريبة)',
     vat:'ضريبة القيمة المضافة 15%', grandTotal:'الإجمالي شامل الضريبة',
     orderTitle:'اطلب المواد عبر واتساب',
@@ -416,9 +416,9 @@ const UI = {
     putty:'The cost excludes the epoxy putty used for surface repair, which depends on the floor condition and technical assessment.',
     drumsRounded:'Drum counts are rounded up to the nearest full pack, since materials are sold in full packs only.',
     unpriced:'Some materials above are not priced yet — their price is quoted on request and they are not included in the total cost.',
-    specialChosen:'Special colour selected: an extra tinting cost will be quoted on order — not included in the calculation above.',
+    specialChosen:'Special colour selected: materials with a special-colour price use it; tinting the top coat is quoted on order and not included above.',
     specialPriced:'Special colour — priced at the special-colour pack price',
-    specialPricedNote:'The top coat is priced at the special-colour pack price from the price list.',
+    specialPricedNote:'The primer and top coat are priced at the special-colour pack prices from the price list.',
     subtotal:'Materials subtotal (excl. VAT)', subtotalPartial:'Priced materials subtotal (excl. VAT)',
     vat:'VAT 15%', grandTotal:'Total incl. VAT',
     orderTitle:'Order the materials on WhatsApp',
@@ -442,7 +442,8 @@ const sar = v => v / 3.75;
 // Text fields are [Arabic, English].
 // id            -> the link of the system: /calculator/<id>/
 // price         -> USD per full pack, written as sar(<SAR price>). null = not in the price list (shown as "on request")
-// sp            -> special-colour pack price (top coats only). Missing on a coloured system = tinting quoted on order
+// sp            -> special-colour (لون خاص) pack price from the sheet, used when "special colour" is picked
+// tint          -> coloured layer with no special-colour price in the sheet: tinting is quoted on order
 // baseRatePerM2 -> consumption (kg or L per m²) at the system's DEFAULT adjustable value
 // scales        -> true: quantity scales with the adjustable field (layers / thickness); false: fixed
 // adjustable    -> null when the system has no layers/thickness control
@@ -453,8 +454,8 @@ const BLUE = ['أزرق', 'blue'];
 const COATS = ['طبقة', 'coats'];
 const MM = ['مم', 'mm'];
 const THINNER = { name:['تينر إيبوكسي S500 (مخفف)', 'Epoxy Thinner S500'], unit:'L', packSize:18, price:sar(170), baseRatePerM2:0.075, scales:true };
-const SF101 = { name:['أساس إيبوكسي خالي من المذيبات SF 101 (طبقة الأساس)', 'Epoxy Primer SF 101 (primer coat)'], unit:'KG', packSize:18, price:sar(360), baseRatePerM2:0.25, scales:false };
-const SB102 = { name:['أساس إيبوكسي SB 102 (طبقة الأساس)', 'Epoxy Primer SB 102 (primer coat)'], unit:'KG', packSize:18, price:sar(312), baseRatePerM2:0.25, scales:false };
+const SF101 = { name:['أساس إيبوكسي خالي من المذيبات SF 101 (طبقة الأساس)', 'Epoxy Primer SF 101 (primer coat)'], unit:'KG', packSize:18, price:sar(360), sp:sar(405), baseRatePerM2:0.25, scales:false };
+const SB102 = { name:['أساس إيبوكسي SB 102 (طبقة الأساس)', 'Epoxy Primer SB 102 (primer coat)'], unit:'KG', packSize:18, price:sar(312), sp:sar(360), baseRatePerM2:0.25, scales:false };
 const MT104 = { name:['أساس إيبوكسي MT 104 (طبقة الأساس)', 'Epoxy Primer MT 104 (primer coat)'], unit:'KG', packSize:15, price:sar(360), baseRatePerM2:0.25, scales:false };
 
 const SYSTEMS = [
@@ -493,7 +494,7 @@ const SYSTEMS = [
     stdColor: GREY, putty: true,
     components: [
       SF101,
-      { name:['إيبوكسي أرضيات HB - 300 (الطبقة النهائية)', 'Epoxy HB-300 (top coat)'], unit:'KG', packSize:24, price:sar(470), baseRatePerM2:0.5, scales:true },
+      { name:['إيبوكسي أرضيات HB - 300 (الطبقة النهائية)', 'Epoxy HB-300 (top coat)'], unit:'KG', packSize:24, price:sar(470), tint:true, baseRatePerM2:0.5, scales:true },
       THINNER
     ]
   },
@@ -557,7 +558,7 @@ const SYSTEMS = [
     stdColor: BLUE, putty: true,
     components: [
       MT104,
-      { name:['إيبوكسي دهان خزانات W.T (الطبقة النهائية)', 'Epoxy Tank Coating W.T (top coat)'], unit:'KG', packSize:25, price:sar(500), baseRatePerM2:0.5, scales:true }
+      { name:['إيبوكسي دهان خزانات W.T (الطبقة النهائية)', 'Epoxy Tank Coating W.T (top coat)'], unit:'KG', packSize:25, price:sar(500), tint:true, baseRatePerM2:0.5, scales:true }
     ]
   },
   {
@@ -569,7 +570,7 @@ const SYSTEMS = [
     stdColor: GREY, putty: true,
     components: [
       SB102,
-      { name:['إيبوكسي كول تار T140 (الطبقة النهائية)', 'Epoxy Coal Tar T140 (top coat)'], unit:'KG', packSize:24, price:sar(420), baseRatePerM2:0.5, scales:true },
+      { name:['إيبوكسي كول تار T140 (الطبقة النهائية)', 'Epoxy Coal Tar T140 (top coat)'], unit:'KG', packSize:24, price:sar(420), tint:true, baseRatePerM2:0.5, scales:true },
       THINNER
     ]
   },
@@ -631,7 +632,7 @@ const SYSTEMS = [
     adjustable: null,
     stdColor: null, putty: false,
     components: [
-      { name:['أساس البولي يوريثان ملون', 'PU Primer - Special Color'], unit:'KG', packSize:18, price:sar(1080), baseRatePerM2:0.25, scales:false },
+      { name:['أساس البولي يوريثان ملون', 'PU Primer - Special Color'], unit:'KG', packSize:18, price:sar(900), baseRatePerM2:0.25, scales:false },
       { name:['معجون PU', 'PU Putty'], unit:'KG', packSize:13, price:sar(400), baseRatePerM2:1, scales:false },
       { name:['البولي يوريثان بوند ستون', 'PU Bond Stone'], unit:'KG', packSize:15, price:sar(1200), baseRatePerM2:1.6, scales:false },
       { name:['سيليكا', 'Silica'], unit:'KG', packSize:25, price:null, baseRatePerM2:8, scales:false },
@@ -745,7 +746,7 @@ function sarText(usdValue){
   return out;
 }
 const isSpecial = () => !!(SYS && SYS.stdColor && colorSelect.value === 'special');
-const hasSpecialPrices = () => SYS.components.some(c => c.sp != null);
+const tintOnRequest = () => SYS.components.some(c => c.tint);
 const priceOf = c => isSpecial() && c.sp != null ? c.sp : c.price;
 // Number first, then unit (e.g. "17.33 ر.س/كجم" / "17.33 SAR/kg")
 function unitPriceText(c){
@@ -786,7 +787,7 @@ function renderSystem(){
 
   if (sys.stdColor){
     $('stdColorOption').textContent = T().stdColor(tr(sys.stdColor));
-    $('specialColorOption').textContent = hasSpecialPrices() ? T().specialPriced : T().specialColor;
+    $('specialColorOption').textContent = tintOnRequest() ? T().specialColor : T().specialPriced;
   } else {
     $('colorField').style.display = 'none';
   }
@@ -820,7 +821,7 @@ function renderNotes(hasUnpriced){
   (sys.notes || []).forEach(n=>items.push(tr(n)));
   items.push(T().drumsRounded);
   if (hasUnpriced) items.push(T().unpriced);
-  if (isSpecial()) items.push(hasSpecialPrices() ? T().specialPricedNote : T().specialChosen);
+  if (isSpecial()) items.push(tintOnRequest() ? T().specialChosen : T().specialPricedNote);
   notesList.innerHTML = items.map(t=>`<li>${t}</li>`).join('');
 }
 
