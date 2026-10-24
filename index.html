@@ -484,7 +484,20 @@ const MM = ['مم', 'mm'];
 const THINNER = { name:['تينر إيبوكسي S500 (مخفف)', 'Epoxy Thinner S500'], unit:'L', packSize:18, price:sar(170), baseRatePerM2:0.075, scales:true };
 const SF101 = { name:['أساس إيبوكسي خالي من المذيبات SF 101 (طبقة الأساس)', 'Epoxy Primer SF 101 (primer coat)'], unit:'KG', packSize:18, price:sar(360), sp:sar(405), baseRatePerM2:0.25, scales:false };
 const SB102 = { name:['أساس إيبوكسي SB 102 (طبقة الأساس)', 'Epoxy Primer SB 102 (primer coat)'], unit:'KG', packSize:18, price:sar(312), sp:sar(360), baseRatePerM2:0.25, scales:false };
+const SKIM70 = mm => ({ name:['سكيم كوت إيبوكسي 70 (معالجة السطح)', 'Epoxy Skim Coat 70 (surface treatment)'], unit:'KG', packSize:24, price:sar(480), baseRatePerM2:1.5*mm, scales:false });
 const MT104 = { name:['أساس إيبوكسي MT 104 (طبقة الأساس)', 'Epoxy Primer MT 104 (primer coat)'], unit:'KG', packSize:15, price:sar(360), baseRatePerM2:0.25, scales:false };
+
+// Sandy pool layers (engineer 2026-10: the primer is the clear PU primer, GRP176)
+const SANDY = [
+  { name:['أساس البولي يوريثان شفاف', 'PU Primer - Clear'], unit:'KG', packSize:15, price:sar(960), baseRatePerM2:0.25, scales:false },
+  { name:['معجون PU', 'PU Putty'], unit:'KG', packSize:13, price:sar(400), baseRatePerM2:1, scales:false },
+  { name:['البولي يوريثان بوند ستون', 'PU Bond Stone'], unit:'KG', packSize:15, price:sar(1200), baseRatePerM2:1.6, scales:false },
+  { name:['سيليكا', 'Silica'], unit:'KG', packSize:25, price:null, baseRatePerM2:8, scales:false },
+  { name:['طبقة حماية البولي يوريثان شفاف', 'PU Top Coat Clear'], unit:'KG', packSize:18, price:sar(1200), baseRatePerM2:0.15, scales:false }
+];
+// Epo Cem waterproofing: 1.5 kg/m² per 1 mm (engineer 2026-10)
+const SEALPOOL = mm => ({ name:['عزل مسابح إيبو سيم سيل بول', 'GR-Epo-Cem Sealpool'], unit:'KG', packSize:60, price:sar(1200), baseRatePerM2:1.5*mm, scales:true });
+const SEALCOAT = mm => ({ name:['عزل إيبو سيم سيل كوت', 'GR-Epo-Cem Sealcoat'], unit:'KG', packSize:60, price:sar(1000), baseRatePerM2:1.5*mm, scales:true });
 
 const SYSTEMS = [
   {
@@ -544,24 +557,25 @@ const SYSTEMS = [
     name: ['إيبوكسي سيلف ليفل 90 SL (داخلي)', 'Epoxy Self Leveling SL 90 (Interior)'],
     desc: ['أرضية إيبوكسي ذاتية التسوية (سيلف ليفل) للاستخدام الداخلي: طبقة أساس + طبقة سيلف ليفل.',
            'Self-leveling epoxy floor for interior use: primer coat + self-leveling layer.'],
-    adjustable: { label:['عدد طبقات السيلف ليفل SL 90', 'Number of SL 90 self leveling coats'], min:1, max:2, default:1, step:1, unit:COATS },
+    adjustable: { label:['سماكة طبقة السيلف ليفل SL 90 (مم)', 'SL 90 layer thickness (mm)'], min:1, max:3, default:2, step:0.5, unit:MM },
     stdColor: GREY, putty: true,
     components: [
       SF101,
-      { name:['إيبوكسي سيلف ليفل 90 SL', 'Epoxy Self Leveling SL 90'], unit:'KG', packSize:18, price:sar(470), sp:sar(520), baseRatePerM2:1.5, scales:true }
+      { name:['إيبوكسي سيلف ليفل 90 SL', 'Epoxy Self Leveling SL 90'], unit:'KG', packSize:18, price:sar(470), sp:sar(520), baseRatePerM2:2.5, scales:true }
     ]
   },
   {
     id: 'resinfloor',
     name: ['ريزن أرضيات SF 125 (داخلي)', 'GR Resin Floor SF125 (Interior)'],
-    desc: ['نظام ريزن أرضيات للاستخدام الداخلي: طبقة سيلف ليفل + طبقة ريزن أرضيات SF 125 + ألوان المشاريع.',
-           'Resin floor system for interior use: SL 90 self leveling layer + GR Resin Floor SF125 + project colours.'],
+    desc: ['نظام ريزن أرضيات للاستخدام الداخلي: طبقة أساس SF 101 + طبقة سيلف ليفل + طبقة ريزن أرضيات SF 125 + ألوان المشاريع.',
+           'Resin floor system for interior use: SF 101 primer + SL 90 self leveling layer + GR Resin Floor SF125 + project colours.'],
     adjustable: null,
     stdColor: null, putty: false,
     components: [
+      SF101,
       { name:['إيبوكسي سيلف ليفل 90 SL', 'Epoxy Self Leveling SL 90'], unit:'KG', packSize:18, price:sar(470), baseRatePerM2:1.5, scales:false },
       { name:['ريزن أرضيات SF 125', 'GR Resin Floor - SF125'], unit:'KG', packSize:15, price:sar(1125), baseRatePerM2:1.5, scales:false },
-      { name:['ألوان مشاريع', 'Project Colours (pigment)'], unit:'KG', packSize:1, price:17.3, baseRatePerM2:0.08, scales:false }
+      { name:['ألوان مشاريع', 'Project Colours (pigment)'], unit:'KG', packSize:1, price:sar(200), baseRatePerM2:0.08, scales:false }
     ]
   },
   {
@@ -573,19 +587,20 @@ const SYSTEMS = [
     stdColor: GREY, putty: true,
     components: [
       { name:['أساس البولي يوريثان (طبقة الأساس)', 'PU Primer (primer coat)'], unit:'KG', packSize:18, price:sar(1080), baseRatePerM2:0.25, scales:false },
-      { name:['دهان البولي يوريثان (الطبقة النهائية)', 'PU Coating (top coat)'], unit:'KG', packSize:18, price:sar(1080), sp:sar(1080), baseRatePerM2:0.5, scales:true },
-      THINNER
+      { name:['دهان البولي يوريثان (الطبقة النهائية)', 'PU Coating (top coat)'], unit:'KG', packSize:18, price:sar(1080), sp:sar(1080), baseRatePerM2:0.4, scales:true },
+      { ...THINNER, baseRatePerM2:0.04 }   // 10% of the top coat
     ]
   },
   {
     id: 'wt',
     name: ['إيبوكسي دهان خزانات W.T (داخلي)', 'Epoxy Tank Coating W.T (Interior)'],
-    desc: ['نظام إيبوكسي لتبطين ودهان الخزانات الداخلية: طبقة أساس + طبقة نهائية قابلة لتعدد الطبقات.',
-           'Epoxy system for lining and coating interior tanks: primer coat + top coat (one or more coats).'],
+    desc: ['نظام إيبوكسي لتبطين ودهان الخزانات الداخلية: طبقة أساس MT 104 + سكيم كوت لمعالجة السطح + طبقتان دهان خزانات W.T.',
+           'Epoxy system for lining and coating interior tanks: MT 104 primer + skim coat surface treatment + two W.T coats.'],
     adjustable: { label:['عدد طبقات دهان الخزانات W.T', 'Number of W.T tank coating coats'], min:1, max:4, default:2, step:1, unit:COATS },
     stdColor: BLUE, putty: true,
     components: [
       MT104,
+      SKIM70(1),
       { name:['إيبوكسي دهان خزانات W.T (الطبقة النهائية)', 'Epoxy Tank Coating W.T (top coat)'], unit:'KG', packSize:25, price:sar(500), tint:true, baseRatePerM2:0.5, scales:true }
     ]
   },
@@ -610,7 +625,7 @@ const SYSTEMS = [
     adjustable: { label:['عدد طبقات المايكروتوبينج Epo-Cem', 'Number of GR-Epo-Cem microtopping coats'], min:1, max:4, default:2, step:1, unit:COATS },
     stdColor: null, putty: true,
     components: [
-      MT104,
+      SF101,
       { name:['مايكروتوبينج Epo-Cem', 'GR-Epo-Cem Microtopping'], unit:'KG', packSize:36, price:sar(700), baseRatePerM2:2, scales:true },
       { name:['ألترا سيلر 10 (طبقة حماية نهائية)', 'Ultra Sealer 10 (protective top coat)'], unit:'L', packSize:18, price:sar(330), baseRatePerM2:0.5, scales:false }
     ]
@@ -625,7 +640,7 @@ const SYSTEMS = [
     components: [
       SF101,
       { name:['ريزن ستون كاربت (رابط الحصى)', 'GR Stone Carpet Bond (stone binder)'], unit:'KG', packSize:18, price:sar(1350), baseRatePerM2:1.26, scales:true },
-      { name:['بولي يوريثان PT50 شفاف (طبقة الحماية النهائية)', 'PU Top Coat Clear PT50 (protective top coat)'], unit:'KG', packSize:18, price:sar(1200), baseRatePerM2:0.4, scales:false }
+      { name:['بولي يوريثان PT50 شفاف (طبقة الحماية النهائية)', 'PU Top Coat Clear PT50 (protective top coat)'], unit:'KG', packSize:18, price:sar(1200), baseRatePerM2:1, scales:false }
     ],
     notes: [
       ['يلزم توفير حصى (مقاس 4-6 مم) بمعدل 18 كجم لكل م² لتنفيذ طبقة بسمك 1 سم.',
@@ -654,18 +669,25 @@ const SYSTEMS = [
   },
   {
     id: 'sandypool',
-    name: ['ساندي بول', 'Sandy Pools'],
-    desc: ['نظام ساندي بول: أساس بولي يوريثان ملون + معجون PU + بولي يوريثان بوند ستون مع السيليكا + طبقة حماية بولي يوريثان شفافة.',
-           'Sandy pool system: PU primer (special color) + PU putty + PU bond stone with silica + PU top coat clear.'],
+    name: ['ساندي بول (مسبح معزول)', 'Sandy Pools (waterproofed pool)'],
+    desc: ['نظام ساندي بول لمسبح معزول مسبقاً: أساس بولي يوريثان شفاف + معجون PU + بولي يوريثان بوند ستون مع السيليكا + طبقة حماية بولي يوريثان شفافة.',
+           'Sandy pool system for an already waterproofed pool: PU primer clear + PU putty + PU bond stone with silica + PU top coat clear.'],
     adjustable: null,
     stdColor: null, putty: false,
-    components: [
-      { name:['أساس البولي يوريثان ملون', 'PU Primer - Special Color'], unit:'KG', packSize:18, price:sar(900), baseRatePerM2:0.25, scales:false },
-      { name:['معجون PU', 'PU Putty'], unit:'KG', packSize:13, price:sar(400), baseRatePerM2:1, scales:false },
-      { name:['البولي يوريثان بوند ستون', 'PU Bond Stone'], unit:'KG', packSize:15, price:sar(1200), baseRatePerM2:1.6, scales:false },
-      { name:['سيليكا', 'Silica'], unit:'KG', packSize:25, price:null, baseRatePerM2:8, scales:false },
-      { name:['طبقة حماية البولي يوريثان شفاف', 'PU Top Coat Clear'], unit:'KG', packSize:18, price:sar(1200), baseRatePerM2:0.15, scales:false }
-    ],
+    components: SANDY,
+    notes: [
+      ['يجب استخدام كمية بسيطة من منتج ريليز لمسح المالج المعدني الذي يتم به فرد طبقة السيليكا حتى لا تلتصق بالأدوات.',
+       'Wipe the steel trowel used to spread the silica layer with a small amount of release agent so it does not stick to the tools.']
+    ]
+  },
+  {
+    id: 'sandypoolseal',
+    name: ['ساندي بول (مسبح غير معزول)', 'Sandy Pools (pool not waterproofed)'],
+    desc: ['نظام ساندي بول لمسبح غير معزول: أساس MT 104 + عزل سيل بول Epo Cem بسمك 1 مم، ثم طبقات الساندي بول.',
+           'Sandy pool system for a pool that is not waterproofed: MT 104 primer + Epo Cem Sealpool (1 mm), then the sandy pool layers.'],
+    adjustable: null,
+    stdColor: null, putty: false,
+    components: [MT104, SEALPOOL(1), ...SANDY],
     notes: [
       ['يجب استخدام كمية بسيطة من منتج ريليز لمسح المالج المعدني الذي يتم به فرد طبقة السيليكا حتى لا تلتصق بالأدوات.',
        'Wipe the steel trowel used to spread the silica layer with a small amount of release agent so it does not stick to the tools.']
@@ -678,12 +700,39 @@ const SYSTEMS = [
     adjustable: null,
     stdColor: null, putty: false,
     components: [
-      { name:['ستيكي روك SR-50', 'Sticky Rock SR-50'], unit:'L', packSize:5, price:sar(150), baseRatePerM2:0.2, scales:false }
+      { name:['ستيكي روك SR-50', 'Sticky Rock SR-50'], unit:'L', packSize:5, price:sar(200), baseRatePerM2:0.2, scales:false }
     ],
     notes: [
       ['قد تختلف الكميات المستخدمة طبقاً لطبيعة الكسر المستخدم وحجمه وسمك طبقة الكسر.',
        'Quantities may vary depending on the type and size of the crushed stone and the thickness of the stone layer.']
     ]
+  },
+  {
+    id: 'sealpool',
+    name: ['عزل مسابح إيبو سيم سيل بول', 'GR-Epo-Cem Sealpool (pool waterproofing)'],
+    desc: ['نظام عزل مائي للمسابح الخرسانية قبل التشطيب النهائي: أساس MT 104 + طبقة سيل بول.',
+           'Waterproofing for concrete swimming pools before the final finish: MT 104 primer + Sealpool layer.'],
+    adjustable: { label:['سماكة طبقة السيل بول (مم)', 'Sealpool thickness (mm)'], min:1, max:3, default:1, step:0.5, unit:MM },
+    stdColor: null, putty: true,
+    components: [MT104, SEALPOOL(1)]
+  },
+  {
+    id: 'sealcoat',
+    name: ['عزل إيبو سيم سيل كوت (حمامات / خزانات / أسطح)', 'GR-Epo-Cem Sealcoat (bathrooms / tanks / roofs)'],
+    desc: ['نظام عزل مائي للحمامات والخزانات والنوافير والأسطح ومعالجة تعشيش الخرسانة: أساس MT 104 + طبقة سيل كوت.',
+           'Waterproofing for bathrooms, tanks, fountains and roofs, and for concrete honeycombing: MT 104 primer + Sealcoat layer.'],
+    adjustable: { label:['سماكة طبقة السيل كوت (مم)', 'Sealcoat thickness (mm)'], min:1, max:3, default:1, step:0.5, unit:MM },
+    stdColor: null, putty: true,
+    components: [MT104, SEALCOAT(1)]
+  },
+  {
+    id: 'skimcoat',
+    name: ['سكيم كوت إيبوكسي 70 (معالجة وتسوية الأسطح)', 'Epoxy Skim Coat 70 (surface levelling)'],
+    desc: ['طبقة إيبوكسي لتسوية وتنعيم الأسطح الخرسانية الخشنة وسد التعشيش قبل دهانات الإيبوكسي أو البولي يوريثان.',
+           'Epoxy layer for levelling and smoothing rough concrete and filling honeycombing before epoxy or PU coatings.'],
+    adjustable: { label:['سماكة طبقة السكيم كوت (مم)', 'Skim coat thickness (mm)'], min:1, max:3, default:1, step:0.5, unit:MM },
+    stdColor: null, putty: true,
+    components: [{ ...SKIM70(1), scales:true }]
   }
 ];
 
@@ -692,7 +741,8 @@ const ALIASES = {
   sb10:'sb110', sb:'sb110', sf:'sf120', hb:'hb300', puflex:'puflex200', flex200:'puflex200',
   sl:'sl90', selflevel:'sl90', sf125:'resinfloor', resin:'resinfloor', polyurethane:'pu',
   tank:'wt', watertank:'wt', t140:'coaltar', microtopping:'epocem', stone:'stonecarpet',
-  tz150:'terrazzo', sandy:'sandypool', sr50:'stickyrock'
+  tz150:'terrazzo', sandy:'sandypool', sr50:'stickyrock', sandyseal:'sandypoolseal',
+  epocemsealpool:'sealpool', epocemsealcoat:'sealcoat', skim:'skimcoat', skimcoat70:'skimcoat'
 };
 
 // ---------- LANGUAGE ----------
