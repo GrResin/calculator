@@ -192,7 +192,6 @@ if (location.hostname.endsWith('github.io'))
   .wa-btn[aria-disabled=true]{opacity:.5;pointer-events:none;}
   .qr-box{display:none;text-align:center;}
   @media (min-width:960px){ .qr-box.on{display:block;} }
-  body.embedded .qr-box.on{display:block;}
   /* inside a kiosk (Labeib iframe) the order button opens this QR instead of WhatsApp */
   #qrDialog{border:0;border-radius:16px;padding:24px;max-width:340px;width:calc(100% - 32px);text-align:center;color:var(--text);}
   #qrDialog::backdrop{background:rgba(30,10,25,.6);}
@@ -1019,10 +1018,11 @@ function updateOrder(){
     else { a.removeAttribute('href'); a.setAttribute('aria-disabled', 'true'); }
   });
 
-  // The QR is for desktop visitors: phones just tap the button. Arabic costs 6 bytes per
+  // The QR is for desktop visitors: phones just tap the button. Inside an iframe (Labeib kiosk) the
+  // buttons open the QR dialog instead, so the inline one would be a second copy. Arabic costs 6 bytes per
   // letter once URL-encoded, so the QR carries only system/area/colour to stay scannable.
   const box = $('qrBox');
-  const show = ok && typeof QRCode !== 'undefined' && (EMBEDDED || matchMedia('(min-width:960px)').matches);
+  const show = ok && typeof QRCode !== 'undefined' && (!EMBEDDED && matchMedia('(min-width:960px)').matches);
   box.classList.toggle('on', show);
   $('orderGrid').classList.toggle('has-qr', show);
   if (!show) return;
