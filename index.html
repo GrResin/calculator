@@ -707,6 +707,26 @@ const SYSTEMS = [
     ]
   },
   {
+    id: 'epocemterrazzo',
+    name: ['تيرازو إيبو سيم (داخلي / خارجي)', 'GR-Epo-Cem Terrazzo (Interior / Exterior)'],
+    desc: ['نظام تيرازو إسمنتي معدّل بالإيبوكسي: طبقة أساس SF 101 + خلطة تيرازو إيبو سيم مع البحص + طبقة حماية بولي يوريثان شفافة بعد الجلخ والتلميع. الكمية تُحسب حسب سماكة الطبقة.',
+           'Epoxy-modified cement terrazzo: SF 101 primer + Epo-Cem terrazzo mix with gravel + clear PU protective coat after grinding and polishing. Quantity is based on the layer thickness.'],
+    adjustable: { label:['سماكة طبقة التيرازو (مم)', 'Terrazzo layer thickness (mm)'], min:10, max:20, default:20, step:1, unit:MM },
+    stdColor: null, putty: true,
+    components: [
+      SF101,
+      { name:['ريزن إيبو سيم تيرازو (A+B)', 'GR-Epo-Cem Terrazzo resin (A+B)'], unit:'KG', packSize:15, price:sar(800), baseRatePerM2:5, scales:true },
+      { name:['فيلر إيبو سيم تيرازو (C)', 'GR-Epo-Cem Terrazzo filler (C)'], unit:'KG', packSize:25, price:sar(50), baseRatePerM2:15, scales:true },
+      { name:['بولي يوريثان PT50 شفاف (طبقة الحماية النهائية)', 'PU Top Coat Clear PT50 (protective top coat)'], unit:'KG', packSize:18, price:sar(1200), baseRatePerM2:0.4, scales:false }
+    ],
+    notes: [
+      ['يلزم توفير بحص (حجم 1 سم) بمعدل 20 كجم لكل م² لطبقة بسمك 2 سم (10 كجم لكل 1 سم).',
+       'Gravel (1 cm size) is required at 20 kg per m² for a 2 cm layer (10 kg per 1 cm).'],
+      ['التكلفة لا تشمل قيمة البحص، ويُجلخ ويُلمّع السطح بعد 48 ساعة قبل طبقة الحماية.',
+       'The cost does not include the gravel; the surface is ground and polished after 48 hours, before the protective coat.']
+    ]
+  },
+  {
     id: 'sealpool',
     name: ['عزل مسابح إيبو سيم سيل بول', 'GR-Epo-Cem Sealpool (pool waterproofing)'],
     desc: ['نظام عزل مائي للمسابح الخرسانية قبل التشطيب النهائي: أساس MT 104 + طبقة سيل بول.',
@@ -741,7 +761,7 @@ const ALIASES = {
   sl:'sl90', selflevel:'sl90', sf125:'resinfloor', resin:'resinfloor', polyurethane:'pu',
   tank:'wt', watertank:'wt', t140:'coaltar', microtopping:'epocem', stone:'stonecarpet',
   tz150:'terrazzo', sandy:'sandypool', sr50:'stickyrock', sandyseal:'sandypoolseal',
-  epocemsealpool:'sealpool', epocemsealcoat:'sealcoat', skim:'skimcoat', skimcoat70:'skimcoat'
+  epocemsealpool:'sealpool', epocemsealcoat:'sealcoat', skim:'skimcoat', skimcoat70:'skimcoat', epocemtz:'epocemterrazzo', cementterrazzo:'epocemterrazzo'
 };
 
 // ---------- LANGUAGE ----------
