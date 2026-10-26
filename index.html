@@ -138,9 +138,15 @@ if (location.hostname.endsWith('github.io'))
   .seg-opts input:checked + span{background:var(--brand);border-color:var(--brand);color:#fff;}
   .seg-opts input:focus-visible + span{box-shadow:0 0 0 3px rgba(167,21,127,.25);}
   /* sales mode: editable consumption rate per material */
-  .rate-in{width:6.5em;padding:6px 8px;border:1.5px solid var(--border);border-radius:8px;font:inherit;font-size:.9rem;text-align:center;background:#fff;}
-  .rate-in.changed{border-color:var(--brand-2);background:var(--brand-soft);font-weight:700;}
-  .rate-reset{border:0;background:none;color:var(--brand-2);cursor:pointer;font:inherit;font-size:.8rem;padding:2px 4px;}
+  @media (min-width:701px){ #resultsTable td.name{min-width:150px;} }
+  .rate-cell{white-space:nowrap;}
+  .rate-cell > *{vertical-align:middle;}
+  .rate-cell .u{margin-inline:6px 2px;}
+  .rate-cell .u{font-size:.78rem;color:var(--mute);}
+  input.rate-in{width:4.6em;padding:6px 6px;border:1.5px solid var(--border);border-radius:8px;font:inherit;font-size:.9rem;text-align:center;background:#fff;}
+  input.rate-in.changed{border-color:var(--brand-2);background:var(--brand-soft);font-weight:700;}
+  .rate-reset{border:0;background:none;color:var(--brand-2);cursor:pointer;font:inherit;font-size:1rem;line-height:1;padding:2px;}
+  .rate-reset[hidden]{display:inline-block;visibility:hidden;}   /* keeps the width when the rate is standard */
   .sales-tag{display:inline-block;margin-top:8px;padding:3px 12px;border-radius:999px;background:#fff;color:var(--brand);font-size:.8rem;font-weight:700;}
   .hint{font-size:.78rem;color:var(--mute);margin-top:6px;}
   .layer-slider-row{display:flex;align-items:center;gap:10px;}
@@ -987,7 +993,7 @@ function calculate(){
     rows += `<tr>
       <td class="name">${tr(c.name)}</td>
       <td class="nw" data-label="${H.thRate}">${SALES
-        ? `<input class="rate-in${i in rates ? ' changed' : ''}" type="text" inputmode="decimal" data-i="${i}" value="${i in rates ? rateText[i] : +stdRate.toFixed(3)}" aria-label="${H.thRate} — ${tr(c.name)}"> ${U[c.unit]}/${H.m2}${i in rates ? ` <button type="button" class="rate-reset" data-i="${i}" title="${H.rateReset}">↺</button>` : ''}`
+        ? `<span class="rate-cell"><input class="rate-in${i in rates ? ' changed' : ''}" type="text" inputmode="decimal" data-i="${i}" value="${i in rates ? rateText[i] : +stdRate.toFixed(3)}" aria-label="${H.thRate} — ${tr(c.name)}"><span class="u">${U[c.unit]}/${H.m2}</span><button type="button" class="rate-reset" data-i="${i}" title="${H.rateReset}" aria-label="${H.rateReset}"${i in rates ? '' : ' hidden'}>↺</button></span>`
         : `${fmt(ratePerM2,3)} ${U[c.unit]}/${H.m2}`}</td>
       <td class="nw" data-label="${H.thQty}">${fmt(exactQty,1)} ${U[c.unit]}</td>
       <td data-label="${H.thPack}"><span>${packPriceText(c)}</span></td>
