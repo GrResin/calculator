@@ -713,11 +713,11 @@ const SYSTEMS = [
   {
     id: 'sandypoolseal',
     name: ['ساندي بول (مسبح غير معزول)', 'Sandy Pools (pool not waterproofed)'],
-    desc: ['نظام ساندي بول لمسبح غير معزول: أساس MT 104 + عزل سيل بول Epo Cem بسمك 1 مم، ثم طبقات الساندي بول.',
-           'Sandy pool system for a pool that is not waterproofed: MT 104 primer + Epo Cem Sealpool (1 mm), then the sandy pool layers.'],
+    desc: ['نظام ساندي بول لمسبح غير معزول: أساس MT 104 + عزل سيل بول Epo Cem بسمك 1.5 مم، ثم طبقات الساندي بول.',
+           'Sandy pool system for a pool that is not waterproofed: MT 104 primer + Epo Cem Sealpool (1.5 mm), then the sandy pool layers.'],
     adjustable: null,
     stdColor: null, putty: false,
-    components: [MT104, SEALPOOL(1), ...SANDY],
+    components: [MT104, SEALPOOL(1.5), ...SANDY],
     notes: [
       ['يجب استخدام كمية بسيطة من منتج ريليز لمسح المالج المعدني الذي يتم به فرد طبقة السيليكا حتى لا تلتصق بالأدوات.',
        'Wipe the steel trowel used to spread the silica layer with a small amount of release agent so it does not stick to the tools.'],
@@ -763,9 +763,9 @@ const SYSTEMS = [
     name: ['عزل مسابح إيبو سيم سيل بول', 'GR-Epo-Cem Sealpool (pool waterproofing)'],
     desc: ['نظام عزل مائي للمسابح الخرسانية قبل التشطيب النهائي: أساس MT 104 + طبقة سيل بول.',
            'Waterproofing for concrete swimming pools before the final finish: MT 104 primer + Sealpool layer.'],
-    adjustable: { label:['سماكة طبقة السيل بول (مم)', 'Sealpool thickness (mm)'], min:1, max:2, default:1, step:0.5, unit:MM },
+    adjustable: { label:['سماكة طبقة السيل بول (مم)', 'Sealpool thickness (mm)'], min:1.5, max:2, default:1.5, step:0.5, unit:MM },
     stdColor: null, putty: true,
-    components: [MT104, SEALPOOL(1)]
+    components: [MT104, SEALPOOL(1.5)]
   },
   {
     id: 'sealcoat',
