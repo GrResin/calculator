@@ -615,7 +615,7 @@ const SYSTEMS = [
     adjustable: { label:['عدد طبقات دهان البولي يوريثان', 'Number of PU top coats'], min:1, max:4, default:2, step:1, unit:COATS },
     stdColor: GREY, putty: true,
     components: [
-      { name:['أساس البولي يوريثان (طبقة الأساس)', 'PU Primer (primer coat)'], unit:'KG', packSize:18, price:sar(1080), baseRatePerM2:0.25, scales:false },
+      { name:['أساس البولي يوريثان (طبقة الأساس)', 'PU Primer (primer coat)'], unit:'KG', packSize:18, price:sar(1080), baseRatePerM2:0.2, range:[0.15, 0.2], per:['لطبقة سمكها 80 ميكرون', 'for an 80 micron layer'], scales:false },
       { name:['دهان البولي يوريثان (الطبقة النهائية)', 'PU Coating (top coat)'], unit:'KG', packSize:18, price:sar(1080), sp:sar(1080), baseRatePerM2:0.4, scales:true },
       { ...THINNER, baseRatePerM2:0.04 }   // 10% of the top coat
     ]
@@ -642,7 +642,7 @@ const SYSTEMS = [
     stdColor: GREY, putty: true,
     components: [
       SB102,
-      { name:['إيبوكسي كول تار T140 (الطبقة النهائية)', 'Epoxy Coal Tar T140 (top coat)'], unit:'KG', packSize:24, price:sar(420), tint:true, baseRatePerM2:0.5, scales:true },
+      { name:['إيبوكسي كول تار T140 (الطبقة النهائية)', 'Epoxy Coal Tar T140 (top coat)'], unit:'KG', packSize:24, price:sar(420), tint:true, baseRatePerM2:0.5, range:[0.4, 0.5], per:['لطبقتين بسماكة 150 – 200 ميكرون', 'for two coats, 150 – 200 microns'], scales:true },
       THINNER
     ]
   },
@@ -655,7 +655,7 @@ const SYSTEMS = [
     stdColor: null, putty: true,
     components: [
       SF101,
-      { name:['مايكروتوبينج Epo-Cem', 'GR-Epo-Cem Microtopping'], unit:'KG', packSize:36, price:sar(700), baseRatePerM2:2, scales:true },
+      { name:['مايكروتوبينج Epo-Cem', 'GR-Epo-Cem Microtopping'], unit:'KG', packSize:36, price:sar(700), baseRatePerM2:2, per:['1 كجم/م² لكل طبقة بسماكة 1 مم', '1 kg/m² per 1 mm coat'], scales:true },
       { name:['ألترا سيلر 10 (طبقة حماية نهائية)', 'Ultra Sealer 10 (protective top coat)'], unit:'L', packSize:18, price:sar(330), baseRatePerM2:0.5, scales:false }
     ]
   },
@@ -668,8 +668,8 @@ const SYSTEMS = [
     stdColor: null, putty: false,
     components: [
       SF101,
-      { name:['ريزن ستون كاربت (رابط الحصى)', 'GR Stone Carpet Bond (stone binder)'], unit:'KG', packSize:18, price:sar(1350), baseRatePerM2:1.26, scales:true },
-      { name:['بولي يوريثان PT50 شفاف (طبقة الحماية النهائية)', 'PU Top Coat Clear PT50 (protective top coat)'], unit:'KG', packSize:18, price:sar(1200), baseRatePerM2:1, scales:false }
+      { name:['ريزن ستون كاربت (رابط الحصى)', 'GR Stone Carpet Bond (stone binder)'], unit:'KG', packSize:18, price:sar(1350), baseRatePerM2:1.5, per:['1.5 كجم/م² لكل 1 سم', '1.5 kg/m² per 1 cm'], scales:true },
+      { name:['بولي يوريثان PT50 شفاف (طبقة الحماية النهائية)', 'PU Top Coat Clear PT50 (protective top coat)'], unit:'KG', packSize:18, price:sar(1200), baseRatePerM2:1, per:['طبقتان', 'two coats'], scales:false }
     ],
     notes: [
       ['يلزم توفير حصى (مقاس 4-6 مم) بمعدل 18 كجم لكل م² لتنفيذ طبقة بسمك 1 سم.',
@@ -992,7 +992,7 @@ function calculate(){
     const rg = c.range && c.range.map(v => +(v * k).toFixed(3));
     if (rg) ranged = true;
     const ratePerM2 = i in rates ? (rg ? Math.min(rg[1], Math.max(rg[0], rates[i])) : rates[i]) : stdRate;
-    const sub = rg ? `<span class="rate-sub">${SALES ? `${rg[0]} – ${rg[1]} · ` : ''}${tr(c.per)}</span>` : '';
+    const sub = c.per ? `<span class="rate-sub">${SALES && rg ? `${rg[0]} – ${rg[1]} · ` : ''}${tr(c.per)}</span>` : '';
     const exactQty = ratePerM2 * area;
     // tiny epsilon so float noise (e.g. 0.15*120 = 18.000000000000004) never adds a drum
     const drumsNeeded = area>0 ? Math.max(0, Math.ceil(exactQty / c.packSize - 1e-9)) : 0;
