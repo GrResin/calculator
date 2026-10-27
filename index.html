@@ -602,7 +602,7 @@ const SYSTEMS = [
     stdColor: null, putty: false,
     components: [
       SF101,
-      { name:['إيبوكسي سيلف ليفل 90 SL', 'Epoxy Self Leveling SL 90'], unit:'KG', packSize:18, price:sar(470), baseRatePerM2:2, range:[1.5, 2], per:['1.5 – 2 كجم/م² لكل 1 مم', '1.5 – 2 kg/m² per 1 mm'], note:['يمكن إضافة GR-Filler إلى السيلف ليفل SL 90 عند الحاجة لزيادة معدل الفرد.', 'GR-Filler can be added to SL 90 when needed to increase coverage.'], scales:false },
+      { name:['إيبوكسي سيلف ليفل 90 SL', 'Epoxy Self Leveling SL 90'], unit:'KG', packSize:18, price:sar(470), baseRatePerM2:2, range:[1.5, 2], per:['بسماكة 1 مم', 'at 1 mm'], note:['يمكن إضافة GR-Filler إلى السيلف ليفل SL 90 عند الحاجة لزيادة معدل الفرد.', 'GR-Filler can be added to SL 90 when needed to increase coverage.'], scales:false },
       { name:['ريزن أرضيات SF 125', 'GR Resin Floor - SF125'], unit:'KG', packSize:15, price:sar(1125), baseRatePerM2:2, range:[1.5, 2], per:['بسماكة 2 مم', 'at 2 mm'], scales:false },
       { name:['ألوان مشاريع', 'Project Colours (pigment)'], unit:'KG', packSize:1, price:sar(200), baseRatePerM2:0.08, scales:false }
     ]
@@ -1012,7 +1012,7 @@ function calculate(){
       <td class="name">${tr(c.name)}</td>
       <td class="nw" data-label="${H.thRate}">${SALES
         ? `<span class="rate-cell"><input class="rate-in${i in rates ? ' changed' : ''}" type="text" inputmode="decimal" data-i="${i}" value="${i in rates ? (rates[i] === ratePerM2 ? rateText[i] : +ratePerM2.toFixed(3)) : +stdRate.toFixed(3)}"${rg ? ` data-min="${rg[0]}" data-max="${rg[1]}"` : ''} aria-label="${H.thRate} — ${tr(c.name)}"><span class="u">${U[c.unit]}/${H.m2}</span><button type="button" class="rate-reset" data-i="${i}" title="${H.rateReset}" aria-label="${H.rateReset}"${i in rates ? '' : ' hidden'}>↺</button>${sub}</span>`
-        : `${rg ? `${fmt(rg[0],3)} – ${fmt(rg[1],3)}` : fmt(ratePerM2,3)} ${U[c.unit]}/${H.m2}${sub}`}</td>
+        : `<span>${rg ? `${fmt(rg[0],3)} – ${fmt(rg[1],3)}` : fmt(ratePerM2,3)} ${U[c.unit]}/${H.m2}${sub}</span>`}</td>
       <td class="nw" data-label="${H.thQty}">${fmt(exactQty,1)} ${U[c.unit]}</td>
       <td data-label="${H.thPack}"><span>${packPriceText(c)}</span></td>
       <td class="drums" data-label="${H.thDrums}"><strong>${drumsNeeded}</strong></td>
