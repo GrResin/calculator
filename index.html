@@ -144,6 +144,8 @@ if (location.hostname.endsWith('github.io'))
   .rate-cell .u{margin-inline:6px 2px;}
   .rate-cell .u{font-size:.78rem;color:var(--mute);}
   input.rate-in{width:4.6em;padding:6px 6px;border:1.5px solid var(--border);border-radius:8px;font:inherit;font-size:.9rem;text-align:center;background:#fff;}
+  input.rate-in.bad{border-color:#c62828;background:#fdecea;}
+  .rate-sub{display:block;font-size:.75rem;color:var(--mute);white-space:normal;}
   input.rate-in.changed{border-color:var(--brand-2);background:var(--brand-soft);font-weight:700;}
   .rate-reset{border:0;background:none;color:var(--brand-2);cursor:pointer;font:inherit;font-size:1rem;line-height:1;padding:2px;}
   .rate-reset[hidden]{display:inline-block;visibility:hidden;}   /* keeps the width when the rate is standard */
@@ -431,7 +433,8 @@ const UI = {
     salesOrderTitle:'إرسال العرض للعميل', salesOrderIntro:'يفتح واتساب برسالة العرض جاهزة، واختر العميل من جهات الاتصال.',
     salesOrderBtn:'إرسال العرض على واتساب', salesOrderBtnShort:'إرسال العرض', salesOrderAfter:'الرابط داخل الرسالة يفتح نفس الحساب للعميل بالمعدلات المعدّلة.',
     salesRateNote:'معدل الاستهلاك قابل للتعديل لكل مادة؛ المعدّل يظهر بلون مختلف، واضغط ↺ للرجوع للمعدل القياسي.',
-    rateReset:'المعدل القياسي', salesMsgHead:'عرض سعر مواد — جرافيتي ريزن', msgRate:'المعدل',
+    rateReset:'المعدل القياسي', perLayer:t=>`لطبقة سمكها ${t} ميكرون`, rangeNote:'الكمية محسوبة على الحد الأعلى لمعدل الاستهلاك.',
+    rangeBad:(a,b)=>`المعدل بين ${a} و ${b}`, salesMsgHead:'عرض سعر مواد — جرافيتي ريزن', msgRate:'المعدل',
     unit:{ KG:'كجم', L:'لتر' }, m2:'م²', cur:'ر.س'
   },
   en: {
@@ -479,7 +482,8 @@ const UI = {
     salesOrderTitle:'Send the quote to the customer', salesOrderIntro:'WhatsApp opens with the quote ready; pick the customer from your contacts.',
     salesOrderBtn:'Send quote on WhatsApp', salesOrderBtnShort:'Send quote', salesOrderAfter:'The link in the message opens the same calculation, with the edited rates, for the customer.',
     salesRateNote:'Each material\'s consumption rate can be edited; edited rates are highlighted, and ↺ goes back to the standard rate.',
-    rateReset:'Standard rate', salesMsgHead:'Materials quote — Graffiti Resin', msgRate:'rate',
+    rateReset:'Standard rate', perLayer:t=>`for a ${t} micron layer`, rangeNote:'Quantities use the top of the consumption range.',
+    rangeBad:(a,b)=>`Rate is between ${a} and ${b}`, salesMsgHead:'Materials quote — Graffiti Resin', msgRate:'rate',
     unit:{ KG:'kg', L:'L' }, m2:'m²', cur:'SAR'
   }
 };
@@ -503,8 +507,8 @@ const BLUE = ['أزرق', 'blue'];
 const COATS = ['طبقة', 'coats'];
 const MM = ['مم', 'mm'];
 const THINNER = { name:['تينر إيبوكسي S500 (مخفف)', 'Epoxy Thinner S500'], unit:'L', packSize:18, price:sar(170), baseRatePerM2:0.075, scales:true };
-const SF101 = { name:['أساس إيبوكسي خالي من المذيبات SF 101 (طبقة الأساس)', 'Epoxy Primer SF 101 (primer coat)'], unit:'KG', packSize:18, price:sar(360), sp:sar(405), baseRatePerM2:0.25, scales:false };
-const SB102 = { name:['أساس إيبوكسي SB 102 (طبقة الأساس)', 'Epoxy Primer SB 102 (primer coat)'], unit:'KG', packSize:18, price:sar(312), sp:sar(360), baseRatePerM2:0.25, scales:false };
+const SF101 = { name:['أساس إيبوكسي خالي من المذيبات SF 101 (طبقة الأساس)', 'Epoxy Primer SF 101 (primer coat)'], unit:'KG', packSize:18, price:sar(360), sp:sar(405), baseRatePerM2:0.35, range:[0.25, 0.35], thick:150, scales:false };
+const SB102 = { name:['أساس إيبوكسي SB 102 (طبقة الأساس)', 'Epoxy Primer SB 102 (primer coat)'], unit:'KG', packSize:18, price:sar(312), sp:sar(360), baseRatePerM2:0.1, range:[0.08, 0.1], thick:100, scales:false };
 const SKIM70 = mm => ({ name:['سكيم كوت إيبوكسي 70 (معالجة السطح)', 'Epoxy Skim Coat 70 (surface treatment)'], unit:'KG', packSize:24, price:sar(480), baseRatePerM2:1.5*mm, scales:false });
 const MT104 = { name:['أساس إيبوكسي MT 104 (طبقة الأساس)', 'Epoxy Primer MT 104 (primer coat)'], unit:'KG', packSize:15, price:sar(360), baseRatePerM2:0.25, scales:false };
 
@@ -530,7 +534,7 @@ const SYSTEMS = [
     stdColor: GREY, putty: true,
     components: [
       SB102,
-      { name:['إيبوكسي أرضيات SB 110 (الطبقة النهائية)', 'Epoxy Coating SB 110 (top coat)'], unit:'KG', packSize:21, price:sar(375), sp:sar(425), baseRatePerM2:0.5, scales:true },
+      { name:['إيبوكسي أرضيات SB 110 (الطبقة النهائية)', 'Epoxy Coating SB 110 (top coat)'], unit:'KG', packSize:21, price:sar(375), sp:sar(425), baseRatePerM2:0.4, range:[0.3, 0.4], thick:100, scales:true },
       THINNER
     ]
   },
@@ -543,8 +547,10 @@ const SYSTEMS = [
     stdColor: GREY, putty: true,
     components: [
       SF101,
-      { name:['إيبوكسي أرضيات SF 120 (الطبقة النهائية)', 'Epoxy Coating SF 120 (top coat)'], unit:'KG', packSize:21, price:sar(455), sp:sar(500), baseRatePerM2:0.5, scales:true },
-      THINNER
+      { name:['إيبوكسي أرضيات SF 120 (الطبقة النهائية)', 'Epoxy Coating SF 120 (top coat)'], unit:'KG', packSize:21, price:sar(455), sp:sar(500), baseRatePerM2:1.2, range:[1, 1.2], thick:150, scales:true }
+    ],
+    notes: [
+      ['يمكن إضافة مخفف (تينر) عند الحاجة.', 'A thinner can be added if needed.']
     ]
   },
   {
@@ -947,6 +953,7 @@ function renderSystem(){
   });
 }
 
+let rangedRates = false;   // set by calculate(): some material shows a min–max rate
 function renderNotes(hasUnpriced){
   const sys = SYS;
   const items = [];
@@ -956,6 +963,7 @@ function renderNotes(hasUnpriced){
   (sys.notes || []).forEach(n=>items.push(tr(n)));
   items.push(T().drumsRounded);
   if (hasUnpriced) items.push(T().unpriced);
+  if (rangedRates && !SALES) items.push(T().rangeNote);
   if (SALES) items.push(T().salesRateNote);
   if (isSpecial()) items.push(tintOnRequest() ? T().specialChosen : T().specialPricedNote);
   notesList.innerHTML = items.map(t=>`<li>${t}</li>`).join('');
@@ -974,9 +982,14 @@ function calculate(){
   let sumDrums = 0, sumWeightKG = 0, sumVolumeL = 0, sumCost = 0;
   let priced = 0, unpriced = 0;
 
+  let ranged = false;
   sys.components.forEach((c, i)=>{
-    const stdRate = c.scales ? c.baseRatePerM2 * ratio : c.baseRatePerM2;
-    const ratePerM2 = i in rates ? rates[i] : stdRate;
+    const k = c.scales ? ratio : 1;
+    const stdRate = c.baseRatePerM2 * k;
+    const rg = c.range && c.range.map(v => +(v * k).toFixed(3));
+    if (rg) ranged = true;
+    const ratePerM2 = i in rates ? (rg ? Math.min(rg[1], Math.max(rg[0], rates[i])) : rates[i]) : stdRate;
+    const sub = rg ? `<span class="rate-sub">${SALES ? `${rg[0]} – ${rg[1]} · ` : ''}${H.perLayer(c.thick)}</span>` : '';
     const exactQty = ratePerM2 * area;
     // tiny epsilon so float noise (e.g. 0.15*120 = 18.000000000000004) never adds a drum
     const drumsNeeded = area>0 ? Math.max(0, Math.ceil(exactQty / c.packSize - 1e-9)) : 0;
@@ -993,8 +1006,8 @@ function calculate(){
     rows += `<tr>
       <td class="name">${tr(c.name)}</td>
       <td class="nw" data-label="${H.thRate}">${SALES
-        ? `<span class="rate-cell"><input class="rate-in${i in rates ? ' changed' : ''}" type="text" inputmode="decimal" data-i="${i}" value="${i in rates ? rateText[i] : +stdRate.toFixed(3)}" aria-label="${H.thRate} — ${tr(c.name)}"><span class="u">${U[c.unit]}/${H.m2}</span><button type="button" class="rate-reset" data-i="${i}" title="${H.rateReset}" aria-label="${H.rateReset}"${i in rates ? '' : ' hidden'}>↺</button></span>`
-        : `${fmt(ratePerM2,3)} ${U[c.unit]}/${H.m2}`}</td>
+        ? `<span class="rate-cell"><input class="rate-in${i in rates ? ' changed' : ''}" type="text" inputmode="decimal" data-i="${i}" value="${i in rates ? (rates[i] === ratePerM2 ? rateText[i] : +ratePerM2.toFixed(3)) : +stdRate.toFixed(3)}"${rg ? ` data-min="${rg[0]}" data-max="${rg[1]}"` : ''} aria-label="${H.thRate} — ${tr(c.name)}"><span class="u">${U[c.unit]}/${H.m2}</span><button type="button" class="rate-reset" data-i="${i}" title="${H.rateReset}" aria-label="${H.rateReset}"${i in rates ? '' : ' hidden'}>↺</button>${sub}</span>`
+        : `${rg ? `${fmt(rg[0],3)} – ${fmt(rg[1],3)}` : fmt(ratePerM2,3)} ${U[c.unit]}/${H.m2}${sub}`}</td>
       <td class="nw" data-label="${H.thQty}">${fmt(exactQty,1)} ${U[c.unit]}</td>
       <td data-label="${H.thPack}"><span>${packPriceText(c)}</span></td>
       <td class="drums" data-label="${H.thDrums}"><strong>${drumsNeeded}</strong></td>
@@ -1003,6 +1016,7 @@ function calculate(){
   });
 
   resultsBody.innerHTML = rows;
+  rangedRates = ranged;
 
   $('totalDrums').textContent = sumDrums;
   const weightParts = [];
@@ -1128,12 +1142,23 @@ if (SYS){
     resultsBody.addEventListener('input', e => {
       const box = e.target.closest('.rate-in'); if (!box) return;
       const i = +box.dataset.i, v = box.value.trim(), n = parseFloat(v);
+      const lo = box.dataset.min, hi = box.dataset.max;
+      const out = lo != null && (n < +lo || n > +hi);
+      box.classList.toggle('bad', out);
+      box.title = out ? T().rangeBad(lo, hi) : '';
       if (v === '') { delete rates[i]; delete rateText[i]; }
-      else if (n >= 0) { rates[i] = n; rateText[i] = v; }
+      else if (n >= 0 && !out) { rates[i] = n; rateText[i] = v; }
       else return;
       calculate();
       const again = resultsBody.querySelector(`.rate-in[data-i="${i}"]`);
       again.focus(); again.setSelectionRange(again.value.length, again.value.length);
+    });
+    resultsBody.addEventListener('change', e => {
+      const box = e.target.closest('.rate-in.bad'); if (!box) return;
+      const i = +box.dataset.i;
+      rates[i] = Math.min(+box.dataset.max, Math.max(+box.dataset.min, parseFloat(box.value) || 0));
+      rateText[i] = String(rates[i]);
+      calculate();
     });
     resultsBody.addEventListener('click', e => {
       const b = e.target.closest('.rate-reset'); if (!b) return;
