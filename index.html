@@ -433,7 +433,7 @@ const UI = {
     salesOrderTitle:'إرسال العرض للعميل', salesOrderIntro:'يفتح واتساب برسالة العرض جاهزة، واختر العميل من جهات الاتصال.',
     salesOrderBtn:'إرسال العرض على واتساب', salesOrderBtnShort:'إرسال العرض', salesOrderAfter:'الرابط داخل الرسالة يفتح نفس الحساب للعميل بالمعدلات المعدّلة.',
     salesRateNote:'معدل الاستهلاك قابل للتعديل لكل مادة؛ المعدّل يظهر بلون مختلف، واضغط ↺ للرجوع للمعدل القياسي.',
-    rateReset:'المعدل القياسي', perLayer:(t,two)=>two ? `لطبقتين بسمك ${t} ميكرون` : `لطبقة سمكها ${t} ميكرون`, rangeNote:'الكمية محسوبة على الحد الأعلى لمعدل الاستهلاك.',
+    rateReset:'المعدل القياسي', rangeNote:'الكمية محسوبة على الحد الأعلى لمعدل الاستهلاك.',
     rangeBad:(a,b)=>`المعدل بين ${a} و ${b}`, salesMsgHead:'عرض سعر مواد — جرافيتي ريزن', msgRate:'المعدل',
     unit:{ KG:'كجم', L:'لتر' }, m2:'م²', cur:'ر.س'
   },
@@ -482,7 +482,7 @@ const UI = {
     salesOrderTitle:'Send the quote to the customer', salesOrderIntro:'WhatsApp opens with the quote ready; pick the customer from your contacts.',
     salesOrderBtn:'Send quote on WhatsApp', salesOrderBtnShort:'Send quote', salesOrderAfter:'The link in the message opens the same calculation, with the edited rates, for the customer.',
     salesRateNote:'Each material\'s consumption rate can be edited; edited rates are highlighted, and ↺ goes back to the standard rate.',
-    rateReset:'Standard rate', perLayer:(t,two)=>two ? `for two coats, ${t} microns` : `for a ${t} micron layer`, rangeNote:'Quantities use the top of the consumption range.',
+    rateReset:'Standard rate', rangeNote:'Quantities use the top of the consumption range.',
     rangeBad:(a,b)=>`Rate is between ${a} and ${b}`, salesMsgHead:'Materials quote — Graffiti Resin', msgRate:'rate',
     unit:{ KG:'kg', L:'L' }, m2:'m²', cur:'SAR'
   }
@@ -507,10 +507,12 @@ const BLUE = ['أزرق', 'blue'];
 const COATS = ['طبقة', 'coats'];
 const MM = ['مم', 'mm'];
 const THINNER = { name:['تينر إيبوكسي S500 (مخفف)', 'Epoxy Thinner S500'], unit:'L', packSize:18, price:sar(170), baseRatePerM2:0.075, scales:true };
-const SF101 = { name:['أساس إيبوكسي خالي من المذيبات SF 101 (طبقة الأساس)', 'Epoxy Primer SF 101 (primer coat)'], unit:'KG', packSize:18, price:sar(360), sp:sar(405), baseRatePerM2:0.35, range:[0.25, 0.35], thick:150, scales:false };
-const SB102 = { name:['أساس إيبوكسي SB 102 (طبقة الأساس)', 'Epoxy Primer SB 102 (primer coat)'], unit:'KG', packSize:18, price:sar(312), sp:sar(360), baseRatePerM2:0.1, range:[0.08, 0.1], thick:100, scales:false };
+const THINNER_NOTE = ['يمكن إضافة مخفف (تينر) عند الحاجة، والتنر يزيد معدل الفرد.', 'A thinner can be added if needed; it increases the spread rate (coverage).'];
+const SF101 = { name:['أساس إيبوكسي خالي من المذيبات SF 101 (طبقة الأساس)', 'Epoxy Primer SF 101 (primer coat)'], unit:'KG', packSize:18, price:sar(360), sp:sar(405), baseRatePerM2:0.35, range:[0.25, 0.35], per:['لطبقة سمكها 150 ميكرون', 'for a 150 micron layer'], scales:false };
+const SB102 = { name:['أساس إيبوكسي SB 102 (طبقة الأساس)', 'Epoxy Primer SB 102 (primer coat)'], unit:'KG', packSize:18, price:sar(312), sp:sar(360), baseRatePerM2:0.1, range:[0.08, 0.1], per:['لطبقة سمكها 100 ميكرون', 'for a 100 micron layer'], scales:false };
 const SKIM70 = mm => ({ name:['سكيم كوت إيبوكسي 70 (معالجة السطح)', 'Epoxy Skim Coat 70 (surface treatment)'], unit:'KG', packSize:24, price:sar(480), baseRatePerM2:1.5*mm, scales:false });
-const MT104 = { name:['أساس إيبوكسي MT 104 (طبقة الأساس)', 'Epoxy Primer MT 104 (primer coat)'], unit:'KG', packSize:15, price:sar(360), baseRatePerM2:0.25, scales:false };
+const MT104 = { name:['أساس إيبوكسي MT 104 (طبقة الأساس)', 'Epoxy Primer MT 104 (primer coat)'], unit:'KG', packSize:15, price:sar(360), baseRatePerM2:0.2, range:[0.15, 0.2],
+  per:['لطبقة سمكها 80 ميكرون', 'for an 80 micron layer'], note:['أساس MT 104 طبقة واحدة، وبحد أقصى طبقتين.', 'MT 104 primer: one coat, two at most.'], scales:false };
 
 // Sandy pool layers (engineer 2026-10: the primer is the clear PU primer, GRP176)
 const SANDY = [
@@ -534,7 +536,7 @@ const SYSTEMS = [
     stdColor: GREY, putty: true,
     components: [
       SB102,
-      { name:['إيبوكسي أرضيات SB 110 (الطبقة النهائية)', 'Epoxy Coating SB 110 (top coat)'], unit:'KG', packSize:21, price:sar(375), sp:sar(425), baseRatePerM2:0.4, range:[0.3, 0.4], thick:100, scales:true },
+      { name:['إيبوكسي أرضيات SB 110 (الطبقة النهائية)', 'Epoxy Coating SB 110 (top coat)'], unit:'KG', packSize:21, price:sar(375), sp:sar(425), baseRatePerM2:0.4, range:[0.3, 0.4], per:['لطبقة سمكها 100 ميكرون', 'for a 100 micron layer'], scales:true },
       THINNER
     ]
   },
@@ -547,10 +549,10 @@ const SYSTEMS = [
     stdColor: GREY, putty: true,
     components: [
       SF101,
-      { name:['إيبوكسي أرضيات SF 120 (الطبقة النهائية)', 'Epoxy Coating SF 120 (top coat)'], unit:'KG', packSize:21, price:sar(455), sp:sar(500), baseRatePerM2:0.3, range:[0.25, 0.3], thick:200, twoCoats:true, scales:true }
+      { name:['إيبوكسي أرضيات SF 120 (الطبقة النهائية)', 'Epoxy Coating SF 120 (top coat)'], unit:'KG', packSize:21, price:sar(455), sp:sar(500), baseRatePerM2:0.3, range:[0.25, 0.3], per:['لطبقتين بسمك 200 ميكرون', 'for two coats, 200 microns'], scales:true }
     ],
     notes: [
-      ['يمكن إضافة مخفف (تينر) عند الحاجة، والتنر يزيد معدل الفرد.', 'A thinner can be added if needed; it increases the spread rate (coverage).']
+      THINNER_NOTE
     ]
   },
   {
@@ -575,9 +577,9 @@ const SYSTEMS = [
     stdColor: GREY, putty: true,
     components: [
       SF101,
-      { name:['بي يو فليكس 200 (الطبقة النهائية)', 'PU-Flex 200 (top coat)'], unit:'KG', packSize:18, price:sar(480), sp:sar(480), baseRatePerM2:0.5, scales:true },
-      THINNER
-    ]
+      { name:['بي يو فليكس 200 (الطبقة النهائية)', 'PU-Flex 200 (top coat)'], unit:'KG', packSize:18, price:sar(480), sp:sar(480), baseRatePerM2:0.6, range:[0.5, 0.6], per:['بسماكة 200 ميكرون', 'at 200 microns'], scales:true }
+    ],
+    notes: [THINNER_NOTE]
   },
   {
     id: 'sl90',
@@ -588,7 +590,7 @@ const SYSTEMS = [
     stdColor: GREY, putty: true,
     components: [
       SF101,
-      { name:['إيبوكسي سيلف ليفل 90 SL', 'Epoxy Self Leveling SL 90'], unit:'KG', packSize:18, price:sar(470), sp:sar(520), baseRatePerM2:2.5, scales:true }
+      { name:['إيبوكسي سيلف ليفل 90 SL', 'Epoxy Self Leveling SL 90'], unit:'KG', packSize:18, price:sar(470), sp:sar(520), baseRatePerM2:4, range:[3, 4], per:['1.5 – 2 كجم/م² لكل 1 مم', '1.5 – 2 kg/m² per 1 mm'], note:['يمكن إضافة GR-Filler إلى السيلف ليفل SL 90 عند الحاجة لزيادة معدل الفرد.', 'GR-Filler can be added to SL 90 when needed to increase coverage.'], scales:true }
     ]
   },
   {
@@ -600,8 +602,8 @@ const SYSTEMS = [
     stdColor: null, putty: false,
     components: [
       SF101,
-      { name:['إيبوكسي سيلف ليفل 90 SL', 'Epoxy Self Leveling SL 90'], unit:'KG', packSize:18, price:sar(470), baseRatePerM2:1.5, scales:false },
-      { name:['ريزن أرضيات SF 125', 'GR Resin Floor - SF125'], unit:'KG', packSize:15, price:sar(1125), baseRatePerM2:1.5, scales:false },
+      { name:['إيبوكسي سيلف ليفل 90 SL', 'Epoxy Self Leveling SL 90'], unit:'KG', packSize:18, price:sar(470), baseRatePerM2:2, range:[1.5, 2], per:['1.5 – 2 كجم/م² لكل 1 مم', '1.5 – 2 kg/m² per 1 mm'], note:['يمكن إضافة GR-Filler إلى السيلف ليفل SL 90 عند الحاجة لزيادة معدل الفرد.', 'GR-Filler can be added to SL 90 when needed to increase coverage.'], scales:false },
+      { name:['ريزن أرضيات SF 125', 'GR Resin Floor - SF125'], unit:'KG', packSize:15, price:sar(1125), baseRatePerM2:2, range:[1.5, 2], per:['بسماكة 2 مم', 'at 2 mm'], scales:false },
       { name:['ألوان مشاريع', 'Project Colours (pigment)'], unit:'KG', packSize:1, price:sar(200), baseRatePerM2:0.08, scales:false }
     ]
   },
@@ -961,6 +963,7 @@ function renderNotes(hasUnpriced){
   items.push(T().exFactory);
   if (sys.putty) items.push(T().putty);
   (sys.notes || []).forEach(n=>items.push(tr(n)));
+  sys.components.forEach(c=>{ if (c.note && !items.includes(tr(c.note))) items.push(tr(c.note)); });
   items.push(T().drumsRounded);
   if (hasUnpriced) items.push(T().unpriced);
   if (rangedRates && !SALES) items.push(T().rangeNote);
@@ -989,7 +992,7 @@ function calculate(){
     const rg = c.range && c.range.map(v => +(v * k).toFixed(3));
     if (rg) ranged = true;
     const ratePerM2 = i in rates ? (rg ? Math.min(rg[1], Math.max(rg[0], rates[i])) : rates[i]) : stdRate;
-    const sub = rg ? `<span class="rate-sub">${SALES ? `${rg[0]} – ${rg[1]} · ` : ''}${H.perLayer(c.thick, c.twoCoats)}</span>` : '';
+    const sub = rg ? `<span class="rate-sub">${SALES ? `${rg[0]} – ${rg[1]} · ` : ''}${tr(c.per)}</span>` : '';
     const exactQty = ratePerM2 * area;
     // tiny epsilon so float noise (e.g. 0.15*120 = 18.000000000000004) never adds a drum
     const drumsNeeded = area>0 ? Math.max(0, Math.ceil(exactQty / c.packSize - 1e-9)) : 0;
