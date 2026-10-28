@@ -148,6 +148,10 @@ if (location.hostname.endsWith('github.io'))
   .rate-sub{display:block;font-size:.75rem;color:var(--mute);white-space:normal;}
   input.rate-in.changed{border-color:var(--brand-2);background:var(--brand-soft);font-weight:700;}
   .rate-reset{border:0;background:none;color:var(--brand-2);cursor:pointer;font:inherit;font-size:1rem;line-height:1;padding:2px;}
+  .mat-x{border:0;background:none;color:var(--mute);cursor:pointer;font:inherit;font-size:.8rem;padding:0 4px;text-decoration:underline;}
+  .mat-x:hover{color:#c62828;}
+  tr.removed td{color:var(--mute);}
+  tr.removed s{font-weight:400;}
   .rate-reset[hidden]{display:inline-block;visibility:hidden;}   /* keeps the width when the rate is standard */
   .sales-tag{display:inline-block;margin-top:8px;padding:3px 12px;border-radius:999px;background:#fff;color:var(--brand);font-size:.8rem;font-weight:700;}
   .hint{font-size:.78rem;color:var(--mute);margin-top:6px;}
@@ -433,7 +437,7 @@ const UI = {
     salesOrderTitle:'إرسال العرض للعميل', salesOrderIntro:'يفتح واتساب برسالة العرض جاهزة، واختر العميل من جهات الاتصال.',
     salesOrderBtn:'إرسال العرض على واتساب', salesOrderBtnShort:'إرسال العرض', salesOrderAfter:'الرابط داخل الرسالة يفتح نفس الحساب للعميل بالمعدلات المعدّلة.',
     salesRateNote:'معدل الاستهلاك قابل للتعديل لكل مادة؛ المعدّل يظهر بلون مختلف، واضغط ↺ للرجوع للمعدل القياسي.',
-    rateReset:'المعدل القياسي', rangeNote:'الكمية محسوبة على الحد الأعلى لمعدل الاستهلاك.',
+    rateReset:'المعدل القياسي', matRemove:'إزالة', matRestore:'إرجاع', rangeNote:'الكمية محسوبة على الحد الأعلى لمعدل الاستهلاك.',
     rangeBad:(a,b)=>`المعدل بين ${a} و ${b}`, salesMsgHead:'عرض سعر مواد — جرافيتي ريزن', msgRate:'المعدل',
     unit:{ KG:'كجم', L:'لتر' }, m2:'م²', cur:'ر.س'
   },
@@ -482,7 +486,7 @@ const UI = {
     salesOrderTitle:'Send the quote to the customer', salesOrderIntro:'WhatsApp opens with the quote ready; pick the customer from your contacts.',
     salesOrderBtn:'Send quote on WhatsApp', salesOrderBtnShort:'Send quote', salesOrderAfter:'The link in the message opens the same calculation, with the edited rates, for the customer.',
     salesRateNote:'Each material\'s consumption rate can be edited; edited rates are highlighted, and ↺ goes back to the standard rate.',
-    rateReset:'Standard rate', rangeNote:'Quantities use the top of the consumption range.',
+    rateReset:'Standard rate', matRemove:'Remove', matRestore:'Add back', rangeNote:'Quantities use the top of the consumption range.',
     rangeBad:(a,b)=>`Rate is between ${a} and ${b}`, salesMsgHead:'Materials quote — Graffiti Resin', msgRate:'rate',
     unit:{ KG:'kg', L:'L' }, m2:'m²', cur:'SAR'
   }
@@ -868,6 +872,7 @@ if (SYS){
 let last = null;   // result of the latest calculate(), used for the order message
 const rates = {}, rateText = {};   // component index -> edited rate per m², and what was typed
 if (SYS) (Q.get('r') || '').split(',').forEach((v, i) => { const n = parseFloat(v); if (n >= 0) { rates[i] = n; rateText[i] = v; } });
+const removed = new Set(SYS ? (Q.get('x') || '').split(',').filter(v => v !== '').map(Number) : []);   // materials taken out of the system
 
 function fmt(n, decimals){
   if (decimals===undefined) decimals = 2;
@@ -965,7 +970,7 @@ function renderNotes(hasUnpriced){
   items.push(T().exFactory);
   if (sys.putty) items.push(T().putty);
   (sys.notes || []).forEach(n=>items.push(tr(n)));
-  sys.components.forEach(c=>{ if (c.note && !items.includes(tr(c.note))) items.push(tr(c.note)); });
+  sys.components.forEach((c, i)=>{ if (!removed.has(i) && c.note && !items.includes(tr(c.note))) items.push(tr(c.note)); });
   items.push(T().drumsRounded);
   if (hasUnpriced) items.push(T().unpriced);
   if (rangedRates && !SALES) items.push(T().rangeNote);
@@ -989,6 +994,10 @@ function calculate(){
 
   let ranged = false;
   sys.components.forEach((c, i)=>{
+    if (removed.has(i)){
+      rows += `<tr class="removed"><td class="name" colspan="6"><s>${tr(c.name)}</s> <button type="button" class="mat-x" data-x="${i}">${H.matRestore}</button></td></tr>`;
+      return;
+    }
     const k = c.scales ? ratio : 1;
     const stdRate = c.baseRatePerM2 * k;
     const rg = c.range && c.range.map(v => +(v * k).toFixed(3));
@@ -1009,7 +1018,7 @@ function calculate(){
     lines.push({ c, drums: drumsNeeded, rate: ratePerM2 });
 
     rows += `<tr>
-      <td class="name">${tr(c.name)}</td>
+      <td class="name">${tr(c.name)} <button type="button" class="mat-x" data-x="${i}">${H.matRemove}</button></td>
       <td class="nw" data-label="${H.thRate}">${SALES
         ? `<span class="rate-cell"><input class="rate-in${i in rates ? ' changed' : ''}" type="text" inputmode="decimal" data-i="${i}" value="${i in rates ? (rates[i] === ratePerM2 ? rateText[i] : +ratePerM2.toFixed(3)) : +stdRate.toFixed(3)}"${rg ? ` data-min="${rg[0]}" data-max="${rg[1]}"` : ''} aria-label="${H.thRate} — ${tr(c.name)}"><span class="u">${U[c.unit]}/${H.m2}</span><button type="button" class="rate-reset" data-i="${i}" title="${H.rateReset}" aria-label="${H.rateReset}"${i in rates ? '' : ' hidden'}>↺</button>${sub}</span>`
         : `<span>${rg ? `${fmt(rg[0],3)} – ${fmt(rg[1],3)}` : fmt(ratePerM2,3)} ${U[c.unit]}/${H.m2}${sub}</span>`}</td>
@@ -1059,6 +1068,7 @@ function calcQuery(forCustomer){
   p.set('area', String(last.area));
   if (SYS.adjustable) p.set('n', String(adjValue));
   if (isSpecial()) p.set('color', 'special');
+  if (removed.size) p.set('x', [...removed].sort((a, b) => a - b).join(','));
   if (Object.keys(rates).length) p.set('r', SYS.components.map((c, i) => i in rates ? rates[i] : '').join(','));
   return p.toString();
 }
@@ -1142,6 +1152,12 @@ if (SYS){
   colorField.addEventListener('change', calculate);
   usdToggle.addEventListener('change', calculate);
   cityInput.addEventListener('input', updateOrder);
+  resultsBody.addEventListener('click', e => {
+    const b = e.target.closest('.mat-x'); if (!b) return;
+    const i = +b.dataset.x;
+    if (!removed.delete(i)) removed.add(i);
+    calculate();
+  });
   if (SALES){
     // calculate() rebuilds the table, so put the cursor back in the box being typed in.
     resultsBody.addEventListener('input', e => {
