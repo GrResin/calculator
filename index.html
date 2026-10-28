@@ -54,7 +54,7 @@ if (location.hostname.endsWith('github.io'))
   /* ---------- the sheet ---------- */
   .sheet{
     max-width:1280px;margin:24px auto 0;background:var(--paper);
-    border-radius:3px;
+    border-radius:3px;overflow-x:clip;   /* the tear-line notches must not widen the page */
     box-shadow:0 1px 2px rgba(23,19,26,.06),0 18px 40px -18px rgba(23,19,26,.28);
   }
   @media (max-width:700px){ .sheet{margin:0;border-radius:0;box-shadow:none;} }
@@ -1162,8 +1162,8 @@ function renderSystem(){
   $('systemName').textContent = tr(sys.name);
   $('systemDesc').textContent = tr(sys.desc);
   const more = $('labeibLink'), pid = LABEIB_IDS[sys.id];
-  more.hidden = !pid;
-  if (pid) { more.href = LABEIB + pid; more.target = EMBEDDED ? '_top' : '_blank'; more.rel = 'noopener'; }   // inside the Labeib kiosk: open the product there
+  more.hidden = !pid || EMBEDDED;   // already inside Labeib: the product page is one tap away there
+  if (pid) { more.href = LABEIB + pid; more.target = '_blank'; more.rel = 'noopener'; }
   $('allSystemsLink').href = indexHref();
   $('areaSuffix').textContent = T().m2;
 
