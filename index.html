@@ -272,6 +272,8 @@ if (location.hostname.endsWith('github.io'))
   <div class="card" id="systemsIndex" style="display:none;">
     <h2 data-i18n="chooseSystem"></h2>
     <div class="sys-list" id="systemsList"></div>
+    <h2 data-i18n="singleProducts" style="margin-top:24px;"></h2>
+    <div class="sys-list" id="productsList"></div>
   </div>
 
   <div id="calcView" style="display:none;">
@@ -397,7 +399,7 @@ const UI = {
     title:'حاسبة استهلاك وتكلفة أنظمة الأرضيات الإيبوكسية',
     subtitle:'أدخل المساحة والسماكة (عدد الطبقات) لحساب الكمية المطلوبة وعدد البراميل والتكلفة التقديرية',
     pageTitle:n=>`حاسبة ${n} — Graffiti Resin`,
-    chooseSystem:'اختر النظام',
+    chooseSystem:'اختر النظام', singleProducts:'منتجات منفردة',
     area:'مساحة الأرضية (م²)',
     color:'اللون',
     usdToggle:'إظهار التكلفة بالدولار الأمريكي أيضاً (اختياري)',
@@ -446,7 +448,7 @@ const UI = {
     title:'Epoxy Flooring Systems — Consumption & Cost Calculator',
     subtitle:'Enter the area and thickness (number of coats) to calculate the required quantity, number of drums and estimated cost',
     pageTitle:n=>`${n} Calculator — Graffiti Resin`,
-    chooseSystem:'Choose a system',
+    chooseSystem:'Choose a system', singleProducts:'Single products',
     area:'Floor area (m²)',
     color:'Colour',
     usdToggle:'Also show the cost in US dollars (optional)',
@@ -498,6 +500,8 @@ const UI = {
 const sar = v => v / 3.75;
 // Text fields are [Arabic, English].
 // id            -> the link of the system: /calculator/<id>/
+// packSize      -> null when the price list has no pack for it: only the quantity is shown
+// single        -> a standalone product, listed under "single products" on the index
 // price         -> USD per full pack, written as sar(<SAR price>). null = not in the price list (shown as "on request")
 // sp            -> special-colour (لون خاص) pack price from the sheet, used when "special colour" is picked
 // tint          -> coloured layer with no special-colour price in the sheet: tinting is quoted on order
@@ -788,6 +792,77 @@ const SYSTEMS = [
     adjustable: { label:['سماكة طبقة السكيم كوت (مم)', 'Skim coat thickness (mm)'], min:1, max:3, default:1, step:0.5, unit:MM },
     stdColor: null, putty: true,
     components: [MT104, { ...SKIM70(1), scales:true }]
+  },
+  // ---------- Single products (technical team's sheet, Oct 2026) ----------
+  {
+    id: 'znp130', single: true,
+    name: ['أساس إيبوكسي فوسفات الزنك ZNP 130 (حماية الحديد)', 'Zinc Phosphate Epoxy Primer ZNP 130 (steel protection)'],
+    desc: ['أساس إيبوكسي مضاد للتآكل لحماية الأسطح الحديدية قبل الدهان النهائي.', 'Anti-corrosion epoxy primer for steel surfaces before the top coat.'],
+    adjustable: { label:['عدد الطبقات', 'Number of coats'], min:1, max:3, default:1, step:1, unit:COATS }, stdColor: null, putty: false,
+    components: [{ name:['أساس إيبوكسي فوسفات الزنك ZNP 130', 'Zinc Phosphate Epoxy Primer ZNP 130'], unit:'KG', packSize:21, price:sar(375), baseRatePerM2:0.167, range:[0.125, 0.167], per:['1 كجم يغطي 6 – 8 م² لكل طبقة', '1 kg covers 6 – 8 m² per coat'], scales:true }]
+  },
+  {
+    id: 'roadmarking', single: true,
+    name: ['دهان تخطيط طرق', 'Road Marking Paint'],
+    desc: ['دهان لتخطيط الطرق ومواقف السيارات.', 'Paint for road and car-park markings.'],
+    adjustable: { label:['سماكة الطبقة (ميكرون)', 'Layer thickness (microns)'], min:100, max:200, default:100, step:50, unit:['ميكرون', 'microns'] }, stdColor: null, putty: false,
+    components: [{ name:['دهان تخطيط طرق', 'Road Marking Paint'], unit:'KG', packSize:20, price:sar(200), baseRatePerM2:0.23, per:['230 جم/م² لكل 100 ميكرون', '230 g/m² per 100 microns'], scales:true }]
+  },
+  {
+    id: 'pusealer', single: true,
+    name: ['سيلر بولي يوريثان PU Sealer', 'PU Sealer'],
+    desc: ['سيلر بولي يوريثان مقاوم للأشعة فوق البنفسجية لحماية الأسطح.', 'UV-resistant polyurethane sealer for surface protection.'],
+    adjustable: { label:['عدد الطبقات', 'Number of coats'], min:1, max:3, default:1, step:1, unit:COATS }, stdColor: null, putty: false,
+    components: [{ name:['سيلر بولي يوريثان PU Sealer', 'PU Sealer'], unit:'KG', packSize:null, price:null, baseRatePerM2:0.15, range:[0.1, 0.15], per:['لطبقة سمكها 80 ميكرون', 'for an 80 micron layer'], scales:true }]
+  },
+  {
+    id: 'm150', single: true,
+    name: ['مونة إيبوكسي M150 (معالجة الحفر والتكسير)', 'Epoxy Mortar M150 (holes and breaks)'],
+    desc: ['مونة إيبوكسية لمعالجة الحفر والتكسّرات العميقة وإعادة بناء الأجزاء التالفة.', 'Epoxy mortar for deep holes and breaks and rebuilding damaged areas.'],
+    adjustable: { label:['السماكة (مم)', 'Thickness (mm)'], min:1, max:50, default:1, step:1, unit:MM }, stdColor: null, putty: false,
+    components: [{ name:['مونة إيبوكسي M150', 'Epoxy Mortar M150'], unit:'KG', packSize:24, price:sar(380), baseRatePerM2:2, per:['2 كجم/م² لكل 1 مم', '2 kg/m² per 1 mm'], scales:true }]
+  },
+  {
+    id: 'sl5', single: true,
+    name: ['سيلف ليفل أسمنتي SL5', 'Cement Self Leveling SL5'],
+    desc: ['تسوية ذاتية أسمنتية لتسوية الأرضيات قبل الطبقات النهائية.', 'Cementitious self-levelling compound for levelling floors before the final layers.'],
+    adjustable: null, stdColor: null, putty: false,
+    components: [{ name:['سيلف ليفل أسمنتي SL5', 'Cement Self Leveling SL5'], unit:'KG', packSize:25, price:sar(45), baseRatePerM2:2.5, per:['بسماكة 1.5 – 2 مم', 'at 1.5 – 2 mm'], scales:false }]
+  },
+  {
+    id: 'epoxygrout', single: true,
+    name: ['ترويب إيبوكسي للبلاط Epoxy Grout', 'Epoxy Grout'],
+    desc: ['جراوت إيبوكسي لفواصل البلاط.', 'Epoxy grout for tile joints.'],
+    adjustable: null, stdColor: null, putty: false,
+    components: [{ name:['ترويب إيبوكسي Epoxy Grout', 'Epoxy Grout'], unit:'KG', packSize:null, price:null, baseRatePerM2:1, per:['بسماكة 2 مم', 'at 2 mm'], scales:false }]
+  },
+  {
+    id: 'silotekt', single: true,
+    name: ['طارد مياه للأحجار Silotekt S (خارجي)', 'Silotekt S water repellent (exterior)'],
+    desc: ['طارد مياه شفاف للأحجار والأسطح الخارجية، لا يغيّر شكل السطح.', 'Clear water repellent for stone and exterior surfaces; does not change their look.'],
+    adjustable: { label:['عدد الطبقات', 'Number of coats'], min:1, max:3, default:1, step:1, unit:COATS }, stdColor: null, putty: false,
+    components: [{ name:['سيلوتيكت Silotekt S', 'Silotekt S'], unit:'L', packSize:15, price:sar(550), baseRatePerM2:0.15, range:[0.1, 0.15], per:['100 – 150 جم/م² بسماكة 50 – 80 ميكرون', '100 – 150 g/m² at 50 – 80 microns'], scales:true }]
+  },
+  {
+    id: 'ultrasealer', single: true,
+    name: ['ألترا سيلر 10 (طبقة حماية شفافة)', 'Ultra Sealer 10 (clear protective coat)'],
+    desc: ['طلاء أكريليكي شفاف لحماية الأسطح الإسمنتية والديكورية.', 'Clear acrylic coat protecting cementitious and decorative surfaces.'],
+    adjustable: { label:['عدد الطبقات', 'Number of coats'], min:1, max:3, default:1, step:1, unit:COATS }, stdColor: null, putty: false,
+    components: [{ name:['ألترا سيلر 10', 'Ultra Sealer 10'], unit:'L', packSize:18, price:sar(330), baseRatePerM2:0.15, range:[0.1, 0.15], per:['100 – 150 جم/م² بسماكة 80 ميكرون', '100 – 150 g/m² at 80 microns'], scales:true }]
+  },
+  {
+    id: 'pustain', single: true,
+    name: ['بولي يوريثان ستين PU Stain', 'PU Stain'],
+    desc: ['صبغة بولي يوريثان لتلوين الركام والأحجار الديكورية.', 'Polyurethane stain for colouring aggregate and decorative stone.'],
+    adjustable: null, stdColor: null, putty: false,
+    components: [{ name:['بولي يوريثان ستين PU Stain', 'PU Stain'], unit:'KG', packSize:15, price:sar(1350), baseRatePerM2:0.15, range:[0.1, 0.15], per:['100 – 150 جم/م² بسماكة 80 ميكرون', '100 – 150 g/m² at 80 microns'], scales:false }]
+  },
+  {
+    id: 'pulacquer', single: true,
+    name: ['ورنيش بولي يوريثان للأخشاب PU Lacquer', 'PU Lacquer (wood)'],
+    desc: ['ورنيش بولي يوريثان شفاف لحماية الأخشاب.', 'Clear polyurethane lacquer protecting wood.'],
+    adjustable: { label:['عدد الطبقات', 'Number of coats'], min:1, max:3, default:1, step:1, unit:COATS }, stdColor: null, putty: false,
+    components: [{ name:['ورنيش بولي يوريثان PU Lacquer', 'PU Lacquer'], unit:'KG', packSize:null, price:null, baseRatePerM2:0.15, range:[0.1, 0.15], per:['لطبقة سمكها 80 ميكرون', 'for an 80 micron layer'], scales:true }]
   }
 ];
 
@@ -797,7 +872,7 @@ const ALIASES = {
   sl:'sl90', selflevel:'sl90', sf125:'resinfloor', resin:'resinfloor', polyurethane:'pu',
   tank:'wt', watertank:'wt', t140:'coaltar', microtopping:'epocem', stone:'stonecarpet',
   tz150:'terrazzo', sandy:'sandypool', sr50:'stickyrock', sandyseal:'sandypoolseal',
-  epocemsealpool:'sealpool', epocemsealcoat:'sealcoat', skim:'skimcoat', skimcoat70:'skimcoat', epocemtz:'epocemterrazzo', cementterrazzo:'epocemterrazzo'
+  epocemsealpool:'sealpool', epocemsealcoat:'sealcoat', skim:'skimcoat', skimcoat70:'skimcoat', znp:'znp130', zinc:'znp130', marking:'roadmarking', mortar:'m150', grout:'epoxygrout', stain:'pustain', lacquer:'pulacquer', epocemtz:'epocemterrazzo', cementterrazzo:'epocemterrazzo'
 };
 
 // ---------- LANGUAGE ----------
@@ -896,6 +971,7 @@ function packPriceText(c){
   const price = priceOf(c);
   const u = T().unit[c.unit];
   const size = LANG === 'en' ? `${c.packSize} ${u} ${T().pack}` : `${T().pack} ${c.packSize} ${u}`;
+  if (!c.packSize) return T().onRequest;
   if (price == null) return `${T().onRequest}<div class="hint nw" style="margin:2px 0 0;">${size}</div>`;
   let out = `<strong class="nw">${sarAmount(price)}</strong>`;
   if (usdToggle.checked) out += ` <span class="hint nw" style="display:inline;">(<bdi dir="ltr">$${fmt(price,2)}</bdi>)</span>`;
@@ -920,8 +996,10 @@ function applyLang(){
 
 function renderIndex(){
   $('systemsIndex').style.display = 'block';
-  $('systemsList').innerHTML =
-    SYSTEMS.map(s=>`<a class="sys-link" href="${systemHref(s.id)}">${tr(s.name)}</a>`).join('');
+  const links = single => SYSTEMS.filter(s => !!s.single === single)
+    .map(s=>`<a class="sys-link" href="${systemHref(s.id)}">${tr(s.name)}</a>`).join('');
+  $('systemsList').innerHTML = links(false);
+  $('productsList').innerHTML = links(true);
   if (IS_WEB) { try { history.replaceState(null, '', indexHref()); } catch(e){} }
 }
 
@@ -1006,16 +1084,17 @@ function calculate(){
     const sub = c.per ? `<span class="rate-sub">${SALES && rg ? `${rg[0]} – ${rg[1]} · ` : ''}${tr(c.per)}</span>` : '';
     const exactQty = ratePerM2 * area;
     // tiny epsilon so float noise (e.g. 0.15*120 = 18.000000000000004) never adds a drum
-    const drumsNeeded = area>0 ? Math.max(0, Math.ceil(exactQty / c.packSize - 1e-9)) : 0;
+    const drumsNeeded = area>0 && c.packSize ? Math.max(0, Math.ceil(exactQty / c.packSize - 1e-9)) : 0;
     const price = priceOf(c);
     const hasPrice = price != null;
     const purchaseCost = hasPrice ? drumsNeeded * price : 0;
     if (hasPrice) priced++; else unpriced++;
 
     sumDrums += drumsNeeded;
-    if (c.unit === 'L') sumVolumeL += drumsNeeded*c.packSize; else sumWeightKG += drumsNeeded*c.packSize;
+    const bought = c.packSize ? drumsNeeded*c.packSize : exactQty;
+    if (c.unit === 'L') sumVolumeL += bought; else sumWeightKG += bought;
     sumCost += purchaseCost;
-    lines.push({ c, drums: drumsNeeded, rate: ratePerM2 });
+    lines.push({ c, drums: drumsNeeded, rate: ratePerM2, qty: exactQty });
 
     rows += `<tr>
       <td class="name">${tr(c.name)} <button type="button" class="mat-x" data-x="${i}">${H.matRemove}</button></td>
@@ -1024,7 +1103,7 @@ function calculate(){
         : `<span>${rg ? `${fmt(rg[0],3)} – ${fmt(rg[1],3)}` : fmt(ratePerM2,3)} ${U[c.unit]}/${H.m2}${sub}</span>`}</td>
       <td class="nw" data-label="${H.thQty}">${fmt(exactQty,1)} ${U[c.unit]}</td>
       <td data-label="${H.thPack}"><span>${packPriceText(c)}</span></td>
-      <td class="drums" data-label="${H.thDrums}"><strong>${drumsNeeded}</strong></td>
+      <td class="drums" data-label="${H.thDrums}"><strong>${c.packSize ? drumsNeeded : '—'}</strong></td>
       <td data-label="${H.thCost}">${hasPrice ? sarText(purchaseCost) : H.onRequest}</td>
     </tr>`;
   });
@@ -1086,8 +1165,8 @@ function orderLines(full){
   if (city) out.push(`${H.msgCity}: ${city}`);
   if (full){
     out.push('', `${H.msgMaterials}:`);
-    last.lines.filter(l=>l.drums>0).forEach(l=>
-      out.push(`• ${tr(l.c.name)}: ${H.msgPack(l.drums, l.c.packSize, H.unit[l.c.unit])}` +
+    last.lines.filter(l=>l.drums>0 || (!l.c.packSize && l.qty>0)).forEach(l=>
+      out.push(`• ${tr(l.c.name)}: ${l.c.packSize ? H.msgPack(l.drums, l.c.packSize, H.unit[l.c.unit]) : `${fmt(l.qty,1)} ${H.unit[l.c.unit]}`}` +
         (SALES ? ` (${H.msgRate} ${+l.rate.toFixed(3)} ${H.unit[l.c.unit]}/${H.m2})` : '')));
     if (last.priced) out.push('', `${H.grandTotal}: ${sarAmount(last.total)}${last.unpriced ? ' + ' + H.onRequest : ''}`);
   }
