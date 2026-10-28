@@ -117,6 +117,13 @@ if (location.hostname.endsWith('github.io'))
   .quote-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:22px;}
   .quote-head h2{margin:0;font-size:var(--f-l);font-weight:700;line-height:1.2;letter-spacing:-.01em;}
   .system-desc{margin:8px 0 0;color:var(--ink-2);max-width:70ch;}
+  .more-link{
+    display:inline-flex;align-items:center;gap:8px;margin-top:10px;min-height:40px;
+    color:var(--stamp);font-weight:600;text-decoration:underline;text-decoration-color:rgba(122,20,96,.35);text-underline-offset:4px;
+  }
+  .more-link:hover{text-decoration-color:currentColor;}
+  .more-link svg{width:17px;height:17px;flex:none;}
+  [dir=rtl] .more-link svg{transform:scaleX(-1);}
   .meta{display:grid;grid-auto-flow:column;gap:28px;font-size:var(--f-s);color:var(--mute);}
   .meta b{display:block;color:var(--ink);font-weight:600;font-size:var(--f-m);}
   @media (max-width:700px){ .quote-head{margin-bottom:16px;} .quote-head h2{font-size:1.375rem;} }
@@ -363,6 +370,7 @@ if (location.hostname.endsWith('github.io'))
       <div>
         <h2 id="systemName"></h2>
         <p id="systemDesc" class="system-desc"></p>
+        <a id="labeibLink" class="more-link" hidden><span data-i18n="moreLink"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a>
       </div>
       <div class="meta"><div><span data-i18n="quoteDate"></span><b id="quoteDate"></b></div></div>
     </div>
@@ -484,6 +492,7 @@ const UI = {
     title:'حاسبة استهلاك وتكلفة أنظمة الأرضيات الإيبوكسية',
     subtitle:'أدخل المساحة والسماكة (عدد الطبقات) لحساب الكمية المطلوبة وعدد البراميل والتكلفة التقديرية',
     pageTitle:n=>`حاسبة ${n} — Graffiti Resin`,
+    moreLink:'اعرف أكثر عن المنتج: طريقة التحضير والصور',
     quoteTitle:'عرض سعر مواد', quoteDate:'التاريخ', jobDetails:'بيانات العمل', stamp:'تقدير مبدئي',
     chooseSystem:'اختر النظام', singleProducts:'منتجات منفردة',
     area:'مساحة الأرضية (م²)',
@@ -534,6 +543,7 @@ const UI = {
     title:'Epoxy Flooring Systems — Consumption & Cost Calculator',
     subtitle:'Enter the area and thickness (number of coats) to calculate the required quantity, number of drums and estimated cost',
     pageTitle:n=>`${n} Calculator — Graffiti Resin`,
+    moreLink:'More about this product: application steps and photos',
     quoteTitle:'Materials quotation', quoteDate:'Date', jobDetails:'Job details', stamp:'Estimate',
     chooseSystem:'Choose a system', singleProducts:'Single products',
     area:'Floor area (m²)',
@@ -953,6 +963,40 @@ const SYSTEMS = [
   }
 ];
 
+// Each system's product page in the Labeib catalog (id from the product's image URLs in the Labeib export)
+const LABEIB = 'https://labeib.madteck.com/catalog/ggmIPJlLd4pAPLP6FvbZhmtLihn_bygw?p=';
+const LABEIB_IDS = {
+  sb110:'cmuttf6v800138yumk2n7g52j',
+  sf120:'cmuttf70p00158yumwdgdjpwf',
+  hb300:'cmuttf7c800198yum2swcsgm7',
+  puflex200:'cmuttf7j9001b8yumhape8ca0',
+  sl90:'cmuttf8pj001n8yumpuhtcr5j',
+  resinfloor:'cmuttf5fm000n8yumi1fgx8k6',
+  pu:'cmuttf76800178yumhc0w7dhx',
+  wt:'cmuttf9f6001v8yumh5m9t3a3',
+  coaltar:'cmuttf9w300218yumd34s1hym',
+  epocem:'cmuttf67d000v8yumxs8dg9nv',
+  stonecarpet:'cmuttf5q4000p8yumlmx4bhtv',
+  terrazzo:'cmuttf6dp000x8yumamxscwoe',
+  sandypool:'cmuttf5vv000r8yuml3akv7m2',
+  sandypoolseal:'cmuttf5vv000r8yuml3akv7m2',
+  epocemterrazzo:'cmuttf6j3000z8yum54s6hykh',
+  stickyrock:'cmuttf6oq00118yumjvfxx362',
+  sealpool:'cmuttf9l7001x8yumsl2liwkz',
+  sealcoat:'cmuttf9qs001z8yum6xhkhjj3',
+  skimcoat:'cmuttf91l001r8yumwye83jjf',
+  znp130:'cmuttfb85002f8yum3yve9368',
+  roadmarking:'cmuttfbvc002j8yum5tobvq9n',
+  pusealer:'cmuttfbe5002h8yuml5li7e90',
+  m150:'cmuttf7zh001f8yumippc9l58',
+  sl5:'cmuttf8vp001p8yumy2aiknwo',
+  epoxygrout:'cmuttf982001t8yumirt8bfu8',
+  silotekt:'cmuttfav2002b8yumewkl57nr',
+  ultrasealer:'cmuttfb2b002d8yumqmf3elsq',
+  pustain:'cmuttfc8q002n8yumphiwic4n',
+  pulacquer:'cmuttfci8002p8yum8gxh7a5k'
+};
+
 // Other spellings people may type in the link -> system id
 const ALIASES = {
   sb10:'sb110', sb:'sb110', sf:'sf120', hb:'hb300', puflex:'puflex200', flex200:'puflex200',
@@ -1117,6 +1161,9 @@ function renderSystem(){
   document.body.classList.add('has-bar');
   $('systemName').textContent = tr(sys.name);
   $('systemDesc').textContent = tr(sys.desc);
+  const more = $('labeibLink'), pid = LABEIB_IDS[sys.id];
+  more.hidden = !pid;
+  if (pid) { more.href = LABEIB + pid; more.target = EMBEDDED ? '_top' : '_blank'; more.rel = 'noopener'; }   // inside the Labeib kiosk: open the product there
   $('allSystemsLink').href = indexHref();
   $('areaSuffix').textContent = T().m2;
 
