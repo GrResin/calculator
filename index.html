@@ -122,11 +122,11 @@ if (location.hostname.endsWith('github.io'))
   @media (max-width:700px){ .quote-head{margin-bottom:16px;} .quote-head h2{font-size:1.375rem;} }
 
   .layout{display:grid;gap:28px;}
-  @media (min-width:1180px){
+  @media (min-width:1320px){
     .layout{grid-template-columns:250px 1fr;gap:36px;align-items:start;}
     .layout > .inputs{position:sticky;top:16px;}
   }
-  @media (min-width:701px) and (max-width:1179px){
+  @media (min-width:701px) and (max-width:1319px){
     .inputs{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));column-gap:32px;}
     .inputs h3, .inputs .toggle-row{grid-column:1/-1;}
   }
@@ -167,11 +167,11 @@ if (location.hostname.endsWith('github.io'))
   .toggle-row label{margin:0;}
 
   /* ---------- bill of quantities ---------- */
-  .boq{min-width:0;overflow-x:auto;}
+  .boq{min-width:0;}
   table{width:100%;border-collapse:collapse;}
   thead th{
-    font-size:var(--f-s);font-weight:700;text-align:start;vertical-align:bottom;
-    padding:10px 10px;border-top:1.5px solid var(--ink);border-bottom:1.5px solid var(--ink);
+    font-size:var(--f-s);font-weight:700;text-align:start;vertical-align:middle;white-space:nowrap;
+    padding:12px 10px;border-top:1.5px solid var(--ink);border-bottom:1.5px solid var(--ink);
   }
   td{padding:14px 10px;text-align:start;vertical-align:top;border-bottom:1px solid var(--rule);}
   th.ln, td.ln{width:2.2em;padding-inline:0 6px;color:var(--mute);font-weight:600;}
@@ -187,10 +187,10 @@ if (location.hostname.endsWith('github.io'))
 
   .mat-x{
     display:inline-block;margin-inline-start:4px;border:0;background:none;padding:2px 4px;cursor:pointer;
-    font:inherit;font-size:var(--f-s);font-weight:500;color:var(--mute);
-    text-decoration:underline;text-decoration-color:var(--rule);text-underline-offset:3px;
+    font:inherit;font-size:var(--f-s);font-weight:600;color:var(--alert);
+    text-decoration:underline;text-decoration-color:rgba(179,38,30,.35);text-underline-offset:3px;
   }
-  .mat-x:hover{color:var(--alert);text-decoration-color:currentColor;}
+  .mat-x:hover{text-decoration-color:currentColor;}
   tr.removed td{color:var(--mute);background:repeating-linear-gradient(-45deg,transparent 0 7px,#f6f3f7 7px 8px);}
   tr.removed s{font-weight:500;text-decoration-thickness:1.5px;}
   tr.removed .mat-x{color:var(--stamp);text-decoration-color:currentColor;}
@@ -210,7 +210,7 @@ if (location.hostname.endsWith('github.io'))
   .rate-reset svg{width:16px;height:16px;}
   .rate-reset[hidden]{display:inline-block;visibility:hidden;}
 
-  @media (max-width:700px){
+  @media (max-width:900px){
     thead{display:none;}
     table, tbody, tr, td{display:block;width:100%;}
     tbody{border-top:1.5px solid var(--ink);}
@@ -490,8 +490,8 @@ const UI = {
     color:'اللون',
     usdToggle:'إظهار التكلفة بالدولار الأمريكي أيضاً (اختياري)',
     materials:'تفاصيل المواد المطلوبة',
-    thMaterial:'المادة', thRate:'الاستهلاك / م²', thQty:'الكمية الفعلية المطلوبة',
-    thPack:'سعر العبوة', pack:'عبوة', thDrums:'عدد البراميل (شراء)', thCost:'التكلفة التقديرية',
+    thMaterial:'المادة', thRate:'الاستهلاك / م²', thQty:'الكمية المطلوبة',
+    thPack:'سعر العبوة', pack:'عبوة', thDrums:'العبوات', thCost:'التكلفة',
     totalDrums:'إجمالي عدد البراميل/العبوات', totalWeight:'إجمالي وزن/حجم المواد',
     notesTitle:'ملاحظات هامة:',
     allSystems:'عرض كل الأنظمة',
@@ -541,7 +541,7 @@ const UI = {
     usdToggle:'Also show the cost in US dollars (optional)',
     materials:'Required materials',
     thMaterial:'Material', thRate:'Consumption / m²', thQty:'Required quantity',
-    thPack:'Pack price', pack:'pack', thDrums:'Drums to buy', thCost:'Estimated cost',
+    thPack:'Pack price', pack:'pack', thDrums:'Packs', thCost:'Cost',
     totalDrums:'Total drums / packs', totalWeight:'Total material weight / volume',
     notesTitle:'Important notes:',
     allSystems:'View all systems',
