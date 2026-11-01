@@ -1140,7 +1140,9 @@ function roll(el, text){
   if (old === text) return;
   if (old == null || STILL.matches) { el.textContent = text; return; }
   const off = old.length - text.length;   // align from the end, where the units are
-  el.innerHTML = [...text].map((ch, i) => /\d/.test(ch) && ch !== old[i + off] ? `<span class="roll">${ch}</span>` : ch).join('');
+  // The number stays one LTR run: inline-block digits are bidi-neutral and would be reversed in Arabic
+  el.innerHTML = text.replace(/\d[\d.,]*/g, (run, at) => `<bdi dir="ltr">${[...run].map((ch, j) =>
+    /\d/.test(ch) && ch !== old[at + j + off] ? `<span class="roll">${ch}</span>` : ch).join('')}</bdi>`);
 }
 
 function renderIndex(){
