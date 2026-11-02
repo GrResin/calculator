@@ -57,7 +57,7 @@ if (location.hostname.endsWith('github.io'))
     border-radius:3px;overflow-x:clip;   /* the tear-line notches must not widen the page */
     box-shadow:0 1px 2px rgba(23,19,26,.06),0 18px 40px -18px rgba(23,19,26,.28);
   }
-  @media (max-width:700px){ .sheet{margin:0;border-radius:0;box-shadow:none;} }
+  @media (max-width:700px){ html:not(.printing) .sheet{margin:0;border-radius:0;box-shadow:none;} }
 
   /* letterhead */
   .letterhead{
@@ -82,14 +82,14 @@ if (location.hostname.endsWith('github.io'))
   }
   .lang-btn:hover{border-color:var(--ink);}
   @media (max-width:700px){
-    .letterhead{padding:14px 16px 12px;gap:12px;flex-wrap:wrap;}
-    .letterhead img{height:34px;}
-    .lh-title{order:3;flex-basis:100%;border:0;padding:0;}
-    .lh-side{margin-inline-start:auto;}
+    html:not(.printing) .letterhead{padding:14px 16px 12px;gap:12px;flex-wrap:wrap;}
+    html:not(.printing) .letterhead img{height:34px;}
+    html:not(.printing) .lh-title{order:3;flex-basis:100%;border:0;padding:0;}
+    html:not(.printing) .lh-side{margin-inline-start:auto;}
   }
 
   .page{padding:26px 40px 34px;}
-  @media (max-width:700px){ .page{padding:18px 16px 26px;} }
+  @media (max-width:700px){ html:not(.printing) .page{padding:18px 16px 26px;} }
 
   /* ---------- index: ruled register ---------- */
   .register + .register{margin-top:34px;}
@@ -98,7 +98,7 @@ if (location.hostname.endsWith('github.io'))
     padding-bottom:8px;border-bottom:1.5px solid var(--ink);
   }
   .sys-list{display:grid;grid-template-columns:1fr 1fr;column-gap:40px;}
-  @media (max-width:700px){ .sys-list{grid-template-columns:1fr;} }
+  @media (max-width:700px){ html:not(.printing) .sys-list{grid-template-columns:1fr;} }
   .sys-link{
     display:flex;align-items:center;gap:14px;min-height:58px;padding:10px 6px;
     border-bottom:1px solid var(--rule);text-decoration:none;color:var(--ink);
@@ -127,7 +127,7 @@ if (location.hostname.endsWith('github.io'))
   [dir=rtl] .more-link svg{transform:scaleX(-1);}
   .meta{display:grid;grid-auto-flow:column;gap:28px;font-size:var(--f-s);color:var(--mute);}
   .meta b{display:block;color:var(--ink);font-weight:600;font-size:var(--f-m);}
-  @media (max-width:700px){ .quote-head{margin-bottom:16px;} .quote-head h2{font-size:1.375rem;} }
+  @media (max-width:700px){ html:not(.printing) .quote-head{margin-bottom:16px;} html:not(.printing) .quote-head h2{font-size:1.375rem;} }
 
   .layout{display:grid;gap:28px;}
   @media (min-width:1320px){
@@ -219,25 +219,26 @@ if (location.hostname.endsWith('github.io'))
   .rate-reset[hidden]{display:inline-block;visibility:hidden;}
 
   @media screen and (max-width:900px){
-    thead{display:none;}
-    table, tbody, tr, td{display:block;width:100%;}
-    tbody{border-top:1.5px solid var(--ink);}
-    tr{position:relative;padding:12px 0 10px;border-bottom:1px solid var(--rule);display:grid;grid-template-columns:1fr 1fr;column-gap:16px;}
-    td{border:0;padding:4px 0;display:flex;flex-direction:column;}
-    td::before{content:attr(data-label);color:var(--mute);font-size:var(--f-s);}
-    td.ln{position:absolute;inset-inline-start:0;top:12px;width:auto;padding:0;}
-    td.ln::before, td.name::before{content:none;}
-    td.name{grid-column:1/-1;padding-inline-start:2em;padding-bottom:8px;font-size:1.0625rem;}
-    td.num{text-align:start;}
-    td:nth-child(3){grid-column:1/-1;flex-direction:row;flex-wrap:wrap;align-items:baseline;column-gap:10px;}
-    td:nth-child(3)::before{flex-basis:100%;}
-    tr.removed{display:block;padding:12px 0;}
-    tr.removed td{padding-inline-start:2em;}
+    html:not(.printing) thead{display:none;}
+    html:not(.printing) table, html:not(.printing) tbody, html:not(.printing) tr, html:not(.printing) td{display:block;width:100%;}
+    html:not(.printing) tbody{border-top:1.5px solid var(--ink);}
+    html:not(.printing) tr{position:relative;padding:12px 0 10px;border-bottom:1px solid var(--rule);display:grid;grid-template-columns:1fr 1fr;column-gap:16px;}
+    html:not(.printing) td{border:0;padding:4px 0;display:flex;flex-direction:column;}
+    html:not(.printing) td::before{content:attr(data-label);color:var(--mute);font-size:var(--f-s);}
+    html:not(.printing) td.ln{position:absolute;inset-inline-start:0;top:12px;width:auto;padding:0;}
+    html:not(.printing) td.ln::before, html:not(.printing) td.name::before{content:none;}
+    html:not(.printing) td.name{grid-column:1/-1;padding-inline-start:2em;padding-bottom:8px;font-size:1.0625rem;}
+    html:not(.printing) td.num{text-align:start;}
+    html:not(.printing) td:nth-child(3){grid-column:1/-1;flex-direction:row;flex-wrap:wrap;align-items:baseline;column-gap:10px;}
+    html:not(.printing) td:nth-child(3)::before{flex-basis:100%;}
+    html:not(.printing) tr.removed{display:block;padding:12px 0;}
+    html:not(.printing) tr.removed td{padding-inline-start:2em;}
   }
 
   /* summary: counts, bill, stamp */
   .summary{display:grid;gap:28px;margin-top:22px;}
-  @media print, (min-width:760px){ .summary{grid-template-columns:1fr minmax(300px,380px);align-items:start;} }
+  html.printing .summary{grid-template-columns:1fr minmax(260px,330px);align-items:start;}
+  @media (min-width:760px){ .summary{grid-template-columns:1fr minmax(300px,380px);align-items:start;} }
   .counts{display:flex;gap:36px;flex-wrap:wrap;}
   .counts div{min-width:120px;}
   .counts .num{display:block;font-size:1.375rem;font-weight:700;line-height:1.3;}
@@ -251,9 +252,9 @@ if (location.hostname.endsWith('github.io'))
   #usdBlock{margin-top:8px;}
   .sum-side{display:flex;flex-direction:column;justify-content:space-between;gap:24px;}
   @media screen and (max-width:759px){
-    .summary{grid-template-columns:1fr;}
-    .sum-side{display:contents;}
-    .counts{order:1;} .bill{order:2;} .stamp{order:3;justify-self:end;}
+    html:not(.printing) .summary{grid-template-columns:1fr;}
+    html:not(.printing) .sum-side{display:contents;}
+    html:not(.printing) .counts{order:1;} html:not(.printing) .bill{order:2;} html:not(.printing) .stamp{order:3;justify-self:end;}
   }
   .stamp{
     align-self:flex-end;margin-inline-end:18px;width:max-content;
@@ -280,7 +281,7 @@ if (location.hostname.endsWith('github.io'))
   }
   .stub::before{inset-inline-start:-12px;}
   .stub::after{inset-inline-end:-12px;}
-  @media (max-width:700px){ .stub{margin:28px -16px 0;padding:26px 16px 4px;} .stub::before, .stub::after{display:none;} }
+  @media (max-width:700px){ html:not(.printing) .stub{margin:28px -16px 0;padding:26px 16px 4px;} html:not(.printing) .stub::before, html:not(.printing) .stub::after{display:none;} }
   .order-grid{display:grid;gap:28px;align-items:start;}
   @media (min-width:960px){ .order-grid.has-qr{grid-template-columns:1fr auto;} }
   .order-grid .field{border:0;padding-top:4px;max-width:420px;}
@@ -316,20 +317,20 @@ if (location.hostname.endsWith('github.io'))
   /* phone: total + order always reachable */
   .sticky-bar{display:none;}
   @media (max-width:959px){
-    .sticky-bar.on{
+    html:not(.printing) .sticky-bar.on{
       display:flex;align-items:center;gap:12px;position:fixed;inset-inline:0;bottom:0;z-index:5;
       background:var(--paper);border-top:1.5px solid var(--ink);
       padding:10px 16px calc(10px + env(safe-area-inset-bottom));
     }
-    .sticky-bar .sb-total{flex:1;min-width:0;}
-    .sticky-bar .lbl{display:block;font-size:var(--f-s);color:var(--mute);line-height:1.2;}
-    .sticky-bar .num{font-weight:700;font-size:1.25rem;}
-    .sticky-bar .wa-btn{margin:0;min-height:46px;padding:10px 18px;font-size:.9375rem;}
-    body.has-bar{padding-bottom:88px;}
+    html:not(.printing) .sticky-bar .sb-total{flex:1;min-width:0;}
+    html:not(.printing) .sticky-bar .lbl{display:block;font-size:var(--f-s);color:var(--mute);line-height:1.2;}
+    html:not(.printing) .sticky-bar .num{font-weight:700;font-size:1.25rem;}
+    html:not(.printing) .sticky-bar .wa-btn{margin:0;min-height:46px;padding:10px 18px;font-size:.9375rem;}
+    html:not(.printing) body.has-bar{padding-bottom:88px;}
   }
 
   footer{max-width:1280px;margin:0 auto;padding:16px 40px 34px;color:var(--mute);font-size:var(--f-s);}
-  @media (max-width:700px){ footer{padding:16px;} }
+  @media (max-width:700px){ html:not(.printing) footer{padding:16px;} }
 
   /* signature: only the digits that changed roll in */
   .roll{display:inline-block;animation:roll .45s cubic-bezier(.16,1,.3,1);}
@@ -344,21 +345,29 @@ if (location.hostname.endsWith('github.io'))
 
   /* preliminary quote (sales): the sheet alone on A4 */
   @page{size:A4;margin:12mm;}
-  @media print{
-    html{font-size:12px;}
-    body{background:#fff;padding:0 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-    .sheet{margin:0;max-width:none;box-shadow:none;}
-    .page{padding:14px 0 0;}
-    .letterhead{padding-inline:0;}
-    .lh-side, .more-link, .toggle-row, .mat-x, .rate-reset, tr.removed, .stub, .all-link, .sticky-bar, footer, dialog{display:none !important;}
-    input{border-color:transparent !important;background:none !important;}
-    input[type=range], .lh-title p, .inputs .hint, .notes ol.sales li:last-child, .seg-opts label:not(:has(input:checked)){display:none !important;}
-    .seg-opts{display:inline-flex !important;width:auto !important;}
-    input{appearance:textfield;-moz-appearance:textfield;}
-    input::-webkit-inner-spin-button{display:none;}
-    .quote-head, .notes{margin-top:12px;} .layout{gap:14px;} .summary{margin-top:14px;}
-    tr, .summary, .notes li{break-inside:avoid;}
-  }
+  /* the quote alone on A4 (Ctrl+P, and the sales PDF drawn by sharePdf) */
+  html.printing{font-size:12px;}
+  html.printing body{background:#fff;padding:0 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  html.printing .sheet{margin:0;max-width:760px;box-shadow:none;}
+  html.printing .page{padding:14px 0 0;}
+  html.printing .letterhead{padding-inline:0;}
+  html.printing *{letter-spacing:0 !important;}   /* the PDF drawer splits spaced text into letters, which breaks Arabic joining */
+  html.printing .layout{grid-template-columns:1fr !important;}
+  html.printing .inputs{position:static !important;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));column-gap:32px;}
+  html.printing .inputs h3{grid-column:1/-1;}
+  html.capture .sheet{width:760px;max-width:none;}
+  html.capture .page{padding:20px 28px 24px;}
+  html.capture .letterhead{padding-inline:28px;}
+  html.printing .lh-side, html.printing .more-link, html.printing .toggle-row, html.printing .mat-x, html.printing .rate-reset, html.printing tr.removed, html.printing .stub, html.printing .all-link, html.printing .sticky-bar, html.printing footer, html.printing dialog{display:none !important;}
+  html.printing input{border-color:transparent !important;background:none !important;}
+  html.printing input[type=range], html.printing .lh-title p, html.printing .inputs .hint, html.printing .notes ol.sales li:last-child, html.printing .seg-opts label:not(:has(input:checked)){display:none !important;}
+  html.printing .seg-opts{display:inline-flex !important;width:auto !important;}
+  html.printing input{appearance:textfield;-moz-appearance:textfield;}
+  html.printing input::-webkit-inner-spin-button{display:none;}
+  html.printing .quote-head, html.printing .notes{margin-top:12px;}
+  html.printing .layout{gap:14px;}
+  html.printing .summary{margin-top:14px;}
+  html.printing tr, html.printing .summary, html.printing .notes li{break-inside:avoid;}
   @media (prefers-reduced-motion:reduce){ .roll{animation:none;} *{transition:none !important;} }
 </style>
 </head>
@@ -488,7 +497,7 @@ if (location.hostname.endsWith('github.io'))
           <p class="hint" data-i18n="orderAfter"></p>
           <div id="pdfWrap" hidden>
             <button type="button" class="pdf-btn" id="pdfBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M12 11v6M9 14l3 3 3-3"/></svg><span data-i18n="pdfBtn"></span></button>
-            <p class="hint" data-i18n="pdfHint"></p>
+            <p class="hint" id="pdfHint" data-i18n="pdfHint"></p>
           </div>
         </div>
         <div class="qr-box" id="qrBox">
@@ -527,8 +536,9 @@ const UI = {
     subtitle:'أدخل المساحة والسماكة (عدد الطبقات) لحساب الكمية المطلوبة وعدد البراميل والتكلفة التقديرية',
     pageTitle:n=>`حاسبة ${n} — Graffiti Resin`,
     moreLink:'اعرف أكثر عن المنتج: طريقة التحضير والصور',
-    customer:'العميل', customerField:'اسم العميل (يظهر في العرض)', pdfBtn:'عرض سعر مبدئي PDF',
-    pdfHint:'تفتح نافذة الطباعة: اختر «حفظ كـ PDF» ثم أرسل الملف للعميل.',
+    customer:'العميل', customerField:'اسم العميل (يظهر في العرض)', pdfBtn:'إرسال عرض سعر مبدئي PDF',
+    pdfHint:'يجهّز ملف PDF ويفتح المشاركة: اختر واتساب ثم العميل. على الكمبيوتر يُحمَّل الملف لترفقه في واتساب.',
+    pdfBusy:'جارٍ تجهيز الملف…', pdfReady:'الملف جاهز، اضغط للمشاركة', pdfFail:'تعذّر تجهيز الملف، حاول مرة أخرى.',
     quoteTitle:'عرض سعر مواد', quoteDate:'التاريخ', jobDetails:'بيانات العمل', stamp:'تقدير مبدئي',
     chooseSystem:'اختر النظام', singleProducts:'منتجات منفردة',
     area:'مساحة الأرضية (م²)',
@@ -580,8 +590,9 @@ const UI = {
     subtitle:'Enter the area and thickness (number of coats) to calculate the required quantity, number of drums and estimated cost',
     pageTitle:n=>`${n} Calculator — Graffiti Resin`,
     moreLink:'More about this product: application steps and photos',
-    customer:'Customer', customerField:'Customer name (shown on the quote)', pdfBtn:'Preliminary quote PDF',
-    pdfHint:'Opens the print window: choose "Save as PDF", then send the file to the customer.',
+    customer:'Customer', customerField:'Customer name (shown on the quote)', pdfBtn:'Send preliminary quote PDF',
+    pdfHint:'Builds a PDF and opens sharing: pick WhatsApp, then the customer. On a computer the file downloads so you can attach it in WhatsApp.',
+    pdfBusy:'Preparing the file…', pdfReady:'File ready, tap to share', pdfFail:'Could not prepare the file, try again.',
     quoteTitle:'Materials quotation', quoteDate:'Date', jobDetails:'Job details', stamp:'Estimate',
     chooseSystem:'Choose a system', singleProducts:'Single products',
     area:'Floor area (m²)',
@@ -1335,6 +1346,52 @@ function calculate(){
   updateOrder();
 }
 
+// ---------- SALES: preliminary quote as a PDF, shared straight to WhatsApp ----------
+const loadScript = src => new Promise((ok, fail) => {
+  const el = document.createElement('script'); el.src = src; el.onload = ok; el.onerror = fail; document.head.appendChild(el);
+});
+let pdfCache = null;   // {key, file}: built once per calculation; a second tap shares it if the browser wants a fresh tap
+async function buildPdf(){
+  if (!window.html2canvas) await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
+  if (!window.jspdf) await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+  const root = document.documentElement;
+  root.classList.add('printing', 'capture');
+  try {
+    await document.fonts.ready;
+    const sheet = document.querySelector('.sheet');
+    const canvas = await html2canvas(sheet, { scale:2, backgroundColor:'#ffffff', windowWidth:1000, useCORS:true });
+    const pdf = new jspdf.jsPDF({ unit:'mm', format:'a4' });
+    const m = 10, W = 210 - 2*m, H = 297 - 2*m;
+    let w = W, h = canvas.height * W / canvas.width;
+    if (h > H) { w = w * H / h; h = H; }   // one page: shrink a long quote rather than split it
+    pdf.addImage(canvas.toDataURL('image/jpeg', 0.92), 'JPEG', m + (W - w) / 2, m, w, h);
+    const name = [T().quoteTitle, tr(SYS.name), $('custInput').value.trim()].filter(Boolean).join(' - ').replace(/[\\/:*?"<>|]/g, '');
+    return new File([pdf.output('blob')], name + '.pdf', { type:'application/pdf' });
+  } finally { root.classList.remove('printing', 'capture'); }
+}
+async function sharePdf(){
+  const btn = $('pdfBtn'), label = btn.querySelector('span'), hint = $('pdfHint');
+  const key = calcQuery() + '|' + $('custInput').value.trim();
+  try {
+    if (!pdfCache || pdfCache.key !== key) {
+      btn.disabled = true; label.textContent = T().pdfBusy;
+      pdfCache = { key, file: await buildPdf() };
+    }
+    const file = pdfCache.file;
+    if (navigator.canShare && navigator.canShare({ files:[file] })) {
+      try { await navigator.share({ files:[file], title:file.name }); }
+      catch (e) { if (e.name === 'NotAllowedError') { label.textContent = T().pdfReady; btn.disabled = false; return; } }   // took too long for one tap
+    } else {
+      const a = document.createElement('a'); a.href = URL.createObjectURL(file); a.download = file.name; a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+    }
+    label.textContent = T().pdfBtn; hint.textContent = T().pdfHint;
+  } catch (e) {
+    label.textContent = T().pdfBtn; hint.textContent = T().pdfFail;
+  }
+  btn.disabled = false;
+}
+
 // ---------- ORDER (WhatsApp link + QR) ----------
 // The link that reopens this exact calculation; also kept in the address bar.
 function calcQuery(forCustomer){
@@ -1432,14 +1489,9 @@ if (SYS){
     const v = $('custInput').value.trim();
     $('custName').textContent = v; $('custMeta').hidden = !v;
   });
-  $('pdfBtn').addEventListener('click', () => {
-    // the PDF's file name comes from the page title
-    const t = document.title, cust = $('custInput').value.trim();
-    document.title = [T().quoteTitle, tr(SYS.name), cust].filter(Boolean).join(' - ');
-    window.print();
-    document.title = t;
-  });
-  resultsBody.addEventListener('click', e => {
+  $('pdfBtn').addEventListener('click', sharePdf);
+  addEventListener('beforeprint', () => document.documentElement.classList.add('printing'));
+  addEventListener('afterprint', () => document.documentElement.classList.remove('printing'));  resultsBody.addEventListener('click', e => {
     const b = e.target.closest('.mat-x'); if (!b) return;
     const i = +b.dataset.x;
     if (!removed.delete(i)) removed.add(i);
