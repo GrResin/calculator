@@ -218,7 +218,7 @@ if (location.hostname.endsWith('github.io'))
   .rate-reset svg{width:16px;height:16px;}
   .rate-reset[hidden]{display:inline-block;visibility:hidden;}
 
-  @media (max-width:900px){
+  @media screen and (max-width:900px){
     thead{display:none;}
     table, tbody, tr, td{display:block;width:100%;}
     tbody{border-top:1.5px solid var(--ink);}
@@ -237,7 +237,7 @@ if (location.hostname.endsWith('github.io'))
 
   /* summary: counts, bill, stamp */
   .summary{display:grid;gap:28px;margin-top:22px;}
-  @media (min-width:760px){ .summary{grid-template-columns:1fr minmax(300px,380px);align-items:start;} }
+  @media print, (min-width:760px){ .summary{grid-template-columns:1fr minmax(300px,380px);align-items:start;} }
   .counts{display:flex;gap:36px;flex-wrap:wrap;}
   .counts div{min-width:120px;}
   .counts .num{display:block;font-size:1.375rem;font-weight:700;line-height:1.3;}
@@ -250,7 +250,7 @@ if (location.hostname.endsWith('github.io'))
   .bill-row.grand span:last-child{font-size:var(--f-l);font-weight:700;line-height:1.1;}
   #usdBlock{margin-top:8px;}
   .sum-side{display:flex;flex-direction:column;justify-content:space-between;gap:24px;}
-  @media (max-width:759px){
+  @media screen and (max-width:759px){
     .summary{grid-template-columns:1fr;}
     .sum-side{display:contents;}
     .counts{order:1;} .bill{order:2;} .stamp{order:3;justify-self:end;}
@@ -334,6 +334,31 @@ if (location.hostname.endsWith('github.io'))
   /* signature: only the digits that changed roll in */
   .roll{display:inline-block;animation:roll .45s cubic-bezier(.16,1,.3,1);}
   @keyframes roll{from{transform:translateY(-.6em);opacity:0;filter:blur(2px);}}
+  .pdf-btn{
+    display:inline-flex;align-items:center;gap:10px;min-height:48px;padding:10px 22px;margin-top:14px;
+    background:var(--paper);color:var(--ink);border:1.5px solid var(--ink);border-radius:3px;
+    font:inherit;font-weight:600;cursor:pointer;transition:background-color .2s;
+  }
+  .pdf-btn:hover{background:var(--stamp-soft);}
+  .pdf-btn svg{width:20px;height:20px;flex:none;}
+
+  /* preliminary quote (sales): the sheet alone on A4 */
+  @page{size:A4;margin:12mm;}
+  @media print{
+    html{font-size:12px;}
+    body{background:#fff;padding:0 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    .sheet{margin:0;max-width:none;box-shadow:none;}
+    .page{padding:14px 0 0;}
+    .letterhead{padding-inline:0;}
+    .lh-side, .more-link, .toggle-row, .mat-x, .rate-reset, tr.removed, .stub, .all-link, .sticky-bar, footer, dialog{display:none !important;}
+    input{border-color:transparent !important;background:none !important;}
+    input[type=range], .lh-title p, .inputs .hint, .notes ol.sales li:last-child, .seg-opts label:not(:has(input:checked)){display:none !important;}
+    .seg-opts{display:inline-flex !important;width:auto !important;}
+    input{appearance:textfield;-moz-appearance:textfield;}
+    input::-webkit-inner-spin-button{display:none;}
+    .quote-head, .notes{margin-top:12px;} .layout{gap:14px;} .summary{margin-top:14px;}
+    tr, .summary, .notes li{break-inside:avoid;}
+  }
   @media (prefers-reduced-motion:reduce){ .roll{animation:none;} *{transition:none !important;} }
 </style>
 </head>
@@ -373,7 +398,7 @@ if (location.hostname.endsWith('github.io'))
         <p id="systemDesc" class="system-desc"></p>
         <a id="labeibLink" class="more-link" hidden><span data-i18n="moreLink"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a>
       </div>
-      <div class="meta"><div><span data-i18n="quoteDate"></span><b id="quoteDate"></b></div></div>
+      <div class="meta"><div id="custMeta" hidden><span data-i18n="customer"></span><b id="custName"></b></div><div><span data-i18n="quoteDate"></span><b id="quoteDate"></b></div></div>
     </div>
 
     <div class="layout">
@@ -448,6 +473,10 @@ if (location.hostname.endsWith('github.io'))
       <div class="order-grid" id="orderGrid">
         <div>
           <p class="hint" style="margin:0 0 10px;max-width:60ch;" data-i18n="orderIntro"></p>
+          <div class="field" id="custField" hidden>
+            <label for="custInput" data-i18n="customerField"></label>
+            <input type="text" id="custInput" autocomplete="off">
+          </div>
           <div class="field">
             <label for="cityInput" data-i18n="city"></label>
             <input type="text" id="cityInput" autocomplete="address-level2">
@@ -457,6 +486,10 @@ if (location.hostname.endsWith('github.io'))
             <span data-i18n="orderBtn"></span>
           </a>
           <p class="hint" data-i18n="orderAfter"></p>
+          <div id="pdfWrap" hidden>
+            <button type="button" class="pdf-btn" id="pdfBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M12 11v6M9 14l3 3 3-3"/></svg><span data-i18n="pdfBtn"></span></button>
+            <p class="hint" data-i18n="pdfHint"></p>
+          </div>
         </div>
         <div class="qr-box" id="qrBox">
           <div id="qr"></div>
@@ -494,6 +527,8 @@ const UI = {
     subtitle:'أدخل المساحة والسماكة (عدد الطبقات) لحساب الكمية المطلوبة وعدد البراميل والتكلفة التقديرية',
     pageTitle:n=>`حاسبة ${n} — Graffiti Resin`,
     moreLink:'اعرف أكثر عن المنتج: طريقة التحضير والصور',
+    customer:'العميل', customerField:'اسم العميل (يظهر في العرض)', pdfBtn:'عرض سعر مبدئي PDF',
+    pdfHint:'تفتح نافذة الطباعة: اختر «حفظ كـ PDF» ثم أرسل الملف للعميل.',
     quoteTitle:'عرض سعر مواد', quoteDate:'التاريخ', jobDetails:'بيانات العمل', stamp:'تقدير مبدئي',
     chooseSystem:'اختر النظام', singleProducts:'منتجات منفردة',
     area:'مساحة الأرضية (م²)',
@@ -545,6 +580,8 @@ const UI = {
     subtitle:'Enter the area and thickness (number of coats) to calculate the required quantity, number of drums and estimated cost',
     pageTitle:n=>`${n} Calculator — Graffiti Resin`,
     moreLink:'More about this product: application steps and photos',
+    customer:'Customer', customerField:'Customer name (shown on the quote)', pdfBtn:'Preliminary quote PDF',
+    pdfHint:'Opens the print window: choose "Save as PDF", then send the file to the customer.',
     quoteTitle:'Materials quotation', quoteDate:'Date', jobDetails:'Job details', stamp:'Estimate',
     chooseSystem:'Choose a system', singleProducts:'Single products',
     area:'Floor area (m²)',
@@ -1124,6 +1161,7 @@ function applyLang(){
   $('quoteDate').textContent = now.toLocaleDateString(LANG === 'en' ? 'en-GB' : 'ar-SA-u-ca-gregory-nu-latn', { day:'numeric', month:'long', year:'numeric' });
   $('stampDate').textContent = now.toISOString().slice(0, 10);
   $('salesTag').hidden = !SALES;
+  ['custField','pdfWrap'].forEach(id => $(id).hidden = !SALES);
   $('salesTag').textContent = T().salesTag;
   langBtn.textContent = T().langBtn;
   langBtn.lang = LANG === 'en' ? 'ar' : 'en';
@@ -1209,9 +1247,10 @@ function renderNotes(hasUnpriced){
   items.push(T().drumsRounded);
   if (hasUnpriced) items.push(T().unpriced);
   if (rangedRates && !SALES) items.push(T().rangeNote);
-  if (SALES) items.push(T().salesRateNote);
   if (isSpecial()) items.push(tintOnRequest() ? T().specialChosen : T().specialPricedNote);
+  if (SALES) items.push(T().salesRateNote);   // last, so the printed quote can drop it
   notesList.innerHTML = items.map(t=>`<li>${t}</li>`).join('');
+  notesList.classList.toggle('sales', SALES);
 }
 
 function calculate(){
@@ -1389,6 +1428,17 @@ if (SYS){
   colorField.addEventListener('change', calculate);
   usdToggle.addEventListener('change', calculate);
   cityInput.addEventListener('input', updateOrder);
+  $('custInput').addEventListener('input', () => {
+    const v = $('custInput').value.trim();
+    $('custName').textContent = v; $('custMeta').hidden = !v;
+  });
+  $('pdfBtn').addEventListener('click', () => {
+    // the PDF's file name comes from the page title
+    const t = document.title, cust = $('custInput').value.trim();
+    document.title = [T().quoteTitle, tr(SYS.name), cust].filter(Boolean).join(' - ');
+    window.print();
+    document.title = t;
+  });
   resultsBody.addEventListener('click', e => {
     const b = e.target.closest('.mat-x'); if (!b) return;
     const i = +b.dataset.x;
