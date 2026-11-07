@@ -663,7 +663,7 @@ const MM = ['مم', 'mm'];
 const THINNER = { name:['تينر إيبوكسي S500 (مخفف)', 'Epoxy Thinner S500'], unit:'L', packSize:18, price:sar(170), baseRatePerM2:0.075, scales:true };
 const THINNER_NOTE = ['يمكن إضافة مخفف (تينر) عند الحاجة، والتنر يزيد معدل الفرد.', 'A thinner can be added if needed; it increases the spread rate (coverage).'];
 const SF101 = { name:['أساس إيبوكسي خالي من المذيبات SF 101 (طبقة الأساس)', 'Epoxy Primer SF 101 (primer coat)'], unit:'KG', packSize:18, price:sar(360), sp:sar(405), baseRatePerM2:0.35, range:[0.25, 0.35], per:['لطبقة سمكها 150 ميكرون', 'for a 150 micron layer'], scales:false };
-const SB102 = { name:['أساس إيبوكسي SB 102 (طبقة الأساس)', 'Epoxy Primer SB 102 (primer coat)'], unit:'KG', packSize:18, price:sar(312), sp:sar(360), baseRatePerM2:0.1, range:[0.08, 0.1], per:['لطبقة سمكها 100 ميكرون', 'for a 100 micron layer'], scales:false };
+const SB102 = { name:['أساس إيبوكسي SB 102 (طبقة الأساس)', 'Epoxy Primer SB 102 (primer coat)'], unit:'KG', packSize:18, price:sar(312), sp:sar(360), baseRatePerM2:0.25, scales:false };
 const SKIM70 = mm => ({ name:['سكيم كوت إيبوكسي 70 (معالجة السطح)', 'Epoxy Skim Coat 70 (surface treatment)'], unit:'KG', packSize:24, price:sar(480), baseRatePerM2:1.5*mm, scales:false });
 const MT104 = { name:['أساس إيبوكسي MT 104 (طبقة الأساس)', 'Epoxy Primer MT 104 (primer coat)'], unit:'KG', packSize:15, price:sar(360), baseRatePerM2:0.2, range:[0.15, 0.2],
   per:['لطبقة سمكها 80 ميكرون', 'for an 80 micron layer'], note:['أساس MT 104 طبقة واحدة، وبحد أقصى طبقتين.', 'MT 104 primer: one coat, two at most.'], scales:false };
@@ -690,7 +690,7 @@ const SYSTEMS = [
     stdColor: GREY, putty: true,
     components: [
       SB102,
-      { name:['إيبوكسي أرضيات SB 110 (الطبقة النهائية)', 'Epoxy Coating SB 110 (top coat)'], unit:'KG', packSize:21, price:sar(375), sp:sar(425), baseRatePerM2:0.4, range:[0.3, 0.4], per:['لطبقتين بسمك 200 ميكرون', 'for two coats, 200 microns'], scales:true },
+      { name:['إيبوكسي أرضيات SB 110 (الطبقة النهائية)', 'Epoxy Coating SB 110 (top coat)'], unit:'KG', packSize:21, price:sar(375), sp:sar(425), baseRatePerM2:0.5, per:['0.25 كجم/م² لكل طبقة', '0.25 kg/m² per coat'], scales:true },
       THINNER
     ]
   },
@@ -703,7 +703,7 @@ const SYSTEMS = [
     stdColor: GREY, putty: true,
     components: [
       SF101,
-      { name:['إيبوكسي أرضيات SF 120 (الطبقة النهائية)', 'Epoxy Coating SF 120 (top coat)'], unit:'KG', packSize:21, price:sar(455), sp:sar(500), baseRatePerM2:0.3, range:[0.25, 0.3], per:['لطبقتين بسمك 200 ميكرون', 'for two coats, 200 microns'], scales:true }
+      { name:['إيبوكسي أرضيات SF 120 (الطبقة النهائية)', 'Epoxy Coating SF 120 (top coat)'], unit:'KG', packSize:21, price:sar(455), sp:sar(500), baseRatePerM2:0.5, per:['0.25 كجم/م² لكل طبقة', '0.25 kg/m² per coat'], scales:true }
     ],
     notes: [
       THINNER_NOTE
@@ -769,9 +769,9 @@ const SYSTEMS = [
     adjustable: { label:['عدد طبقات دهان البولي يوريثان', 'Number of PU top coats'], min:1, max:4, default:2, step:1, unit:COATS },
     stdColor: GREY, putty: true,
     components: [
-      { name:['أساس البولي يوريثان (طبقة الأساس)', 'PU Primer (primer coat)'], unit:'KG', packSize:18, price:sar(1080), baseRatePerM2:0.2, range:[0.15, 0.2], per:['لطبقة سمكها 80 ميكرون', 'for an 80 micron layer'], scales:false },
-      { name:['دهان البولي يوريثان (الطبقة النهائية)', 'PU Coating (top coat)'], unit:'KG', packSize:18, price:sar(1080), sp:sar(1080), baseRatePerM2:0.4, per:['لطبقتين بسماكة 150 – 200 ميكرون', 'for two coats, 150 – 200 microns'], scales:true },
-      { ...THINNER, baseRatePerM2:0.04 }   // 10% of the top coat
+      { name:['أساس البولي يوريثان (طبقة الأساس)', 'PU Primer (primer coat)'], unit:'KG', packSize:18, price:sar(1080), baseRatePerM2:0.25, scales:false },
+      { name:['دهان البولي يوريثان (الطبقة النهائية)', 'PU Coating (top coat)'], unit:'KG', packSize:18, price:sar(1080), sp:sar(1080), baseRatePerM2:0.5, per:['0.25 كجم/م² لكل طبقة', '0.25 kg/m² per coat'], scales:true },
+      { ...THINNER, baseRatePerM2:0.04 }
     ]
   },
   {
@@ -822,8 +822,8 @@ const SYSTEMS = [
     stdColor: null, putty: false,
     components: [
       SF101,
-      { name:['ريزن ستون كاربت (رابط الحصى)', 'GR Stone Carpet Bond (stone binder)'], unit:'KG', packSize:18, price:sar(1350), baseRatePerM2:1.5, per:['1.5 كجم/م² لكل 1 سم', '1.5 kg/m² per 1 cm'], scales:true },
-      { name:['بولي يوريثان PT50 شفاف (طبقة الحماية النهائية)', 'PU Top Coat Clear PT50 (protective top coat)'], unit:'KG', packSize:18, price:sar(1200), baseRatePerM2:1, per:['طبقتان', 'two coats'], scales:false }
+      { name:['ريزن ستون كاربت (رابط الحصى)', 'GR Stone Carpet Bond (stone binder)'], unit:'KG', packSize:18, price:sar(1350), baseRatePerM2:1.26, per:['1.26 كجم/م² لكل 1 سم', '1.26 kg/m² per 1 cm'], scales:true },
+      { name:['بولي يوريثان PT50 شفاف (طبقة الحماية النهائية)', 'PU Top Coat Clear PT50 (protective top coat)'], unit:'KG', packSize:18, price:sar(1200), baseRatePerM2:0.4, range:[0.2, 0.4], per:['200 – 400 جم/م² لكل طبقة', '200 – 400 g/m² per coat'], scales:false }
     ],
     notes: [
       ['يلزم توفير حصى (مقاس 4-6 مم) بمعدل 18 كجم لكل م² لتنفيذ طبقة بسمك 1 سم.',
